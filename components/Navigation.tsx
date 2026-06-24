@@ -22,7 +22,7 @@ export default function Navigation() {
     >
       <div
         className="max-w-7xl mx-auto px-8 flex items-center justify-between"
-        style={{ height: 72 }}
+        style={{ height: 56 }}
       >
         {/* Logo */}
         <Link
@@ -30,7 +30,7 @@ export default function Navigation() {
           style={{
             fontFamily: 'var(--font-serif)',
             color: 'var(--foreground)',
-            fontSize: '1.4rem',
+            fontSize: '1.1rem',
             fontWeight: 700,
             textDecoration: 'none',
             letterSpacing: '-0.01em',
@@ -58,7 +58,7 @@ export default function Navigation() {
                 href={href}
                 style={{
                   fontFamily: 'var(--font-sans)',
-                  fontSize: '1rem',
+                  fontSize: '0.88rem',
                   fontWeight: active ? 600 : 400,
                   color: active ? 'var(--amber)' : 'var(--secondary)',
                   textDecoration: 'none',
@@ -99,7 +99,7 @@ export default function Navigation() {
                 onClick={() => setOpen(false)}
                 style={{
                   fontFamily: 'var(--font-sans)',
-                  fontSize: '1.2rem',
+                  fontSize: '1rem',
                   fontWeight: active ? 600 : 400,
                   color: active ? 'var(--amber)' : 'var(--foreground)',
                   textDecoration: 'none',

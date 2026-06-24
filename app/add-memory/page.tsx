@@ -93,8 +93,8 @@ function HelpModal({ onClose }: { onClose: () => void }) {
 
 const inputStyle = {
   width: '100%',
-  padding: '14px 16px',
-  fontSize: '1rem',
+  padding: '10px 12px',
+  fontSize: '0.9rem',
   fontFamily: 'var(--font-sans)',
   color: 'var(--foreground)',
   background: '#fff',
@@ -108,16 +108,16 @@ const inputStyle = {
 const labelStyle: React.CSSProperties = {
   display: 'block',
   fontFamily: 'var(--font-sans)',
-  fontSize: '1rem',
+  fontSize: '0.9rem',
   fontWeight: 600,
   color: 'var(--foreground)',
-  marginBottom: 8,
+  marginBottom: 6,
 }
 
 const hintStyle: React.CSSProperties = {
-  fontSize: '0.9rem',
+  fontSize: '0.82rem',
   color: 'var(--secondary)',
-  marginBottom: 10,
+  marginBottom: 8,
   lineHeight: 1.65,
 }
 
@@ -494,7 +494,7 @@ export default function AddMemoryPage() {
           <div>
             <button
               type="submit" disabled={status === 'uploading'} className="btn-primary"
-              style={{ width: '100%', fontSize: '1rem', padding: '16px', opacity: status === 'uploading' ? 0.7 : 1, cursor: status === 'uploading' ? 'not-allowed' : 'pointer' }}
+              style={{ width: '100%', fontSize: '0.9rem', padding: '12px', opacity: status === 'uploading' ? 0.7 : 1, cursor: status === 'uploading' ? 'not-allowed' : 'pointer' }}
             >
               {status === 'uploading' ? 'Submitting…' : 'Submit Memory'}
             </button>

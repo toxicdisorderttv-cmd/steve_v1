@@ -27,8 +27,8 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  font-size: 17px;
-  line-height: 1.75;
+  font-size: 14px;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -90,9 +90,9 @@ p { margin: 0; }
   background: var(--amber);
   color: #fff;
   font-family: var(--font-sans);
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 500;
-  padding: 14px 32px;
+  padding: 10px 24px;
   border-radius: 3px;
   border: none;
   cursor: pointer;
@@ -115,9 +115,9 @@ p { margin: 0; }
   background: transparent;
   color: var(--amber);
   font-family: var(--font-sans);
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 500;
-  padding: 12px 28px;
+  padding: 9px 22px;
   border-radius: 3px;
   border: 2px solid var(--amber);
   cursor: pointer;
@@ -176,5 +176,5 @@ input:focus, textarea:focus {
 }
 
 @media (max-width: 768px) {
-  body { font-size: 16px; }
+  body { font-size: 13px; }
 }

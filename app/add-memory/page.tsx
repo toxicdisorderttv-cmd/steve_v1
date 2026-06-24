@@ -93,8 +93,8 @@ function HelpModal({ onClose }: { onClose: () => void }) {
 
 const inputStyle = {
   width: '100%',
-  padding: '24px 26px',
-  fontSize: '1.5rem',
+  padding: '14px 16px',
+  fontSize: '1rem',
   fontFamily: 'var(--font-sans)',
   color: 'var(--foreground)',
   background: '#fff',
@@ -108,17 +108,17 @@ const inputStyle = {
 const labelStyle: React.CSSProperties = {
   display: 'block',
   fontFamily: 'var(--font-sans)',
-  fontSize: '1.5rem',
+  fontSize: '1rem',
   fontWeight: 600,
   color: 'var(--foreground)',
-  marginBottom: 12,
+  marginBottom: 8,
 }
 
 const hintStyle: React.CSSProperties = {
-  fontSize: '1.25rem',
+  fontSize: '0.9rem',
   color: 'var(--secondary)',
-  marginBottom: 16,
-  lineHeight: 1.75,
+  marginBottom: 10,
+  lineHeight: 1.65,
 }
 
 function getMediaKind(file: File): MediaKind | null {
@@ -494,7 +494,7 @@ export default function AddMemoryPage() {
           <div>
             <button
               type="submit" disabled={status === 'uploading'} className="btn-primary"
-              style={{ width: '100%', fontSize: '1.5rem', padding: '26px', opacity: status === 'uploading' ? 0.7 : 1, cursor: status === 'uploading' ? 'not-allowed' : 'pointer' }}
+              style={{ width: '100%', fontSize: '1rem', padding: '16px', opacity: status === 'uploading' ? 0.7 : 1, cursor: status === 'uploading' ? 'not-allowed' : 'pointer' }}
             >
               {status === 'uploading' ? 'Submitting…' : 'Submit Memory'}
             </button>

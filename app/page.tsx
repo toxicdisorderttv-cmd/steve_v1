@@ -24,7 +24,7 @@ export default function HomePage() {
             className="fade-up"
             style={{
               flexShrink: 0,
-              width: 440,
+              width: 320,
               borderRadius: 4,
               overflow: 'hidden',
               border: '1px solid var(--border)',
@@ -34,8 +34,8 @@ export default function HomePage() {
             <Image
               src="/hero.jpg"
               alt="Steve Beal"
-              width={440}
-              height={580}
+              width={320}
+              height={420}
               priority
               style={{ width: '100%', height: 'auto', display: 'block' }}
             />

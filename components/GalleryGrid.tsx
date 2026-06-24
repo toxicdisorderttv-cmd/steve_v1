@@ -47,7 +47,7 @@ function GalleryCard({
     >
       {/* Photo / video — only shown if media exists */}
       {submission.photo_url ? (
-        <div style={{ width: '100%', background: '#F0E8DC', position: 'relative', minHeight: 480 }}>
+        <div style={{ width: '100%', background: '#F0E8DC', position: 'relative', minHeight: 320 }}>
           {video ? (
             <video
               src={submission.photo_url}
@@ -84,13 +84,13 @@ function GalleryCard({
       ) : null}
 
       {/* Card content */}
-      <div style={{ padding: '34px 38px 42px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <div style={{ padding: '22px 26px 28px', display: 'flex', flexDirection: 'column', gap: 12 }}>
 
         {/* Title */}
         <h3
           style={{
             fontFamily: 'var(--font-serif)',
-            fontSize: '2rem',
+            fontSize: '1.3rem',
             fontWeight: 700,
             lineHeight: 1.2,
             color: 'var(--foreground)',
@@ -134,9 +134,9 @@ function GalleryCard({
         {/* Story — always fully shown */}
         <p
           style={{
-            fontSize: '1.2rem',
+            fontSize: '0.95rem',
             color: 'var(--secondary)',
-            lineHeight: 1.9,
+            lineHeight: 1.75,
             whiteSpace: 'pre-wrap',
             margin: 0,
           }}

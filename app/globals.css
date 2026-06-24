@@ -27,8 +27,8 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-  font-size: 22px;
-  line-height: 1.8;
+  font-size: 17px;
+  line-height: 1.75;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -86,13 +86,13 @@ p { margin: 0; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   background: var(--amber);
   color: #fff;
   font-family: var(--font-sans);
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 500;
-  padding: 20px 46px;
+  padding: 14px 32px;
   border-radius: 3px;
   border: none;
   cursor: pointer;
@@ -115,9 +115,9 @@ p { margin: 0; }
   background: transparent;
   color: var(--amber);
   font-family: var(--font-sans);
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 500;
-  padding: 18px 42px;
+  padding: 12px 28px;
   border-radius: 3px;
   border: 2px solid var(--amber);
   cursor: pointer;
@@ -168,7 +168,7 @@ p { margin: 0; }
 ══════════════════════════════════ */
 input, textarea {
   font-family: var(--font-sans);
-  font-size: 1.25rem;
+  font-size: 1rem;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
 input:focus, textarea:focus {
@@ -176,5 +176,5 @@ input:focus, textarea:focus {
 }
 
 @media (max-width: 768px) {
-  body { font-size: 20px; }
+  body { font-size: 16px; }
 }

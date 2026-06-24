@@ -1,19 +1,20 @@
 import GalleryGrid from '@/components/GalleryGrid'
 import Link from 'next/link'
 import { Submission } from '@/lib/types'
+import { supabaseAdmin } from '@/lib/supabase'
 
 export const dynamic = 'force-dynamic'
 
 async function getApprovedSubmissions(): Promise<Submission[]> {
   try {
-    const baseUrl =
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000')
-
-    const res = await fetch(`${baseUrl}/api/submissions`, { cache: 'no-store' })
-    if (!res.ok) return []
-    const data = await res.json()
-    return data.submissions ?? []
+    const db = supabaseAdmin()
+    const { data, error } = await db
+      .from('submissions')
+      .select('id, title, photo_url, description, submitter_name, created_at, media_type, relationship')
+      .eq('status', 'approved')
+      .order('created_at', { ascending: true })
+    if (error) return []
+    return data ?? []
   } catch {
     return []
   }

@@ -51,44 +51,28 @@ export async function POST(req: NextRequest) {
     let photo_url = ''
     let resolved_media_type = 'text'
 
-    if (photo && photo.size > 0) {
-      const isVideo = media_type === 'video' || photo.type.startsWith('video/')
+    // Video uploaded client-side — URL arrives ready-made
+    const preUploadedUrl = (formData.get('photo_url') as string)?.trim()
+    if (preUploadedUrl) {
+      photo_url = preUploadedUrl
+      resolved_media_type = 'video'
+    } else if (photo && photo.size > 0) {
       const isImage = photo.type.startsWith('image/')
-
-      if (!isImage && !isVideo) {
-        return NextResponse.json({ error: 'File must be an image or video.' }, { status: 400 })
+      if (!isImage) {
+        return NextResponse.json({ error: 'File must be an image.' }, { status: 400 })
       }
-
       const rawBuffer = Buffer.from(await photo.arrayBuffer())
-
-      let uploadBuffer: Buffer
-      let contentType: string
-      let ext: string
-
-      if (isVideo) {
-        uploadBuffer = rawBuffer
-        contentType = photo.type || 'video/mp4'
-        ext = photo.name.split('.').pop()?.toLowerCase() ?? 'mp4'
-        resolved_media_type = 'video'
-      } else {
-        uploadBuffer = await compressImage(rawBuffer)
-        contentType = 'image/jpeg'
-        ext = 'jpg'
-        resolved_media_type = 'image'
-      }
-
-      const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-
+      const uploadBuffer = await compressImage(rawBuffer)
+      const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`
       const { error: uploadError } = await db.storage
         .from('photos')
-        .upload(filename, uploadBuffer, { contentType, upsert: false })
-
+        .upload(filename, uploadBuffer, { contentType: 'image/jpeg', upsert: false })
       if (uploadError) {
         return NextResponse.json({ error: 'Failed to upload file. Make sure the "photos" storage bucket exists in Supabase.' }, { status: 500 })
       }
-
       const { data: urlData } = db.storage.from('photos').getPublicUrl(filename)
       photo_url = urlData.publicUrl
+      resolved_media_type = 'image'
     }
 
     const { error: insertError } = await db.from('submissions').insert({
@@ -99,7 +83,7 @@ export async function POST(req: NextRequest) {
       photo_url,
       media_type: resolved_media_type,
       relationship: ['family', 'friend', 'colleague', 'other'].includes(relationship) ? relationship : 'other',
-      status: 'pending',
+      status: 'approved',
     })
 
     if (insertError) {

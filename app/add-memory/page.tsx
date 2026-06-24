@@ -174,21 +174,40 @@ export default function AddMemoryPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // photo is optional — no check needed
-
     setStatus('uploading')
     setErrorMsg('')
 
-    const formData = new FormData()
-    formData.append('title', title)
-    formData.append('description', description)
-    formData.append('submitter_name', name)
-    formData.append('submitter_email', email)
-    formData.append('media_type', mediaKind ?? 'image')
-    formData.append('relationship', relationship || 'other')
-    if (file) formData.append('photo', file)
-
     try {
+      const formData = new FormData()
+      formData.append('title', title)
+      formData.append('description', description)
+      formData.append('submitter_name', name)
+      formData.append('submitter_email', email)
+      formData.append('relationship', relationship || 'other')
+
+      if (file && mediaKind === 'video') {
+        // Videos upload directly to Supabase from the browser — bypasses Vercel's 4.5 MB API limit
+        const { createClient } = await import('@supabase/supabase-js')
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        )
+        const ext = file.name.split('.').pop()?.toLowerCase() ?? 'mp4'
+        const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+        const { error: uploadError } = await supabase.storage
+          .from('photos')
+          .upload(filename, file, { contentType: file.type })
+        if (uploadError) throw new Error('Video upload failed. Please try again.')
+        const { data: urlData } = supabase.storage.from('photos').getPublicUrl(filename)
+        formData.append('photo_url', urlData.publicUrl)
+        formData.append('media_type', 'video')
+      } else if (file && mediaKind === 'image') {
+        formData.append('photo', file)
+        formData.append('media_type', 'image')
+      } else {
+        formData.append('media_type', 'text')
+      }
+
       const res = await fetch('/api/submissions', { method: 'POST', body: formData })
       if (!res.ok) {
         const data = await res.json().catch(() => ({}))

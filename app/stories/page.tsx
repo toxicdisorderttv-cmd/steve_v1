@@ -2,6 +2,8 @@ import GalleryGrid from '@/components/GalleryGrid'
 import Link from 'next/link'
 import { Submission } from '@/lib/types'
 
+export const dynamic = 'force-dynamic'
+
 async function getApprovedSubmissions(): Promise<Submission[]> {
   try {
     const baseUrl =

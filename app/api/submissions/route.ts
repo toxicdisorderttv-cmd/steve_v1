@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabaseAdmin } from '@/lib/supabase'
 
 export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
 
 const MAX_DIMENSION = 1800
 const QUALITY = 80

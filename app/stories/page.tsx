@@ -14,7 +14,7 @@ async function getApprovedSubmissions(): Promise<Submission[]> {
       .eq('status', 'approved')
       .order('created_at', { ascending: true })
     if (error) return []
-    return data ?? []
+    return (data ?? []) as Submission[]
   } catch {
     return []
   }

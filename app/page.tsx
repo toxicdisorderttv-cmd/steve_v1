@@ -68,7 +68,7 @@ export default function HomePage() {
                 lineHeight: 1.6,
               }}
             >
-              Whisky Hall of Fame · Master of Whisky · Mentor · Priest · Friend
+              Keeper of the Quaich · Whisky Hall of Fame · Ordained Priest · Mentor · Friend
             </p>
             <p
               style={{
@@ -110,29 +110,46 @@ export default function HomePage() {
           className="flex flex-col gap-7"
         >
           <p>
-            Steve Beal was among the first of Diageo&apos;s Masters of Whisky — a designation earned not
-            in a classroom but across decades of genuine passion, relentless curiosity, and the kind of
-            expertise that can only come from living inside a subject. Based in San Francisco, he led
-            Diageo&apos;s North American whiskey efforts and is one of the chief reasons Bulleit rose
-            from relative obscurity to become a staple behind bars across the country.
+            Steve Beal is among the most respected whisky authorities in America. One of only fifteen
+            people ever named a Diageo Master of Whisky — a designation earned not in a classroom but
+            across decades of genuine passion, relentless curiosity, and the kind of expertise that
+            can only come from living inside a subject. For more than fifteen years he led Diageo&apos;s
+            whisky education on the US West Coast, based out of his home in San Francisco.
           </p>
           <p>
-            His career reads like a tour through the greatest names in whisky: Johnnie Walker, the
-            Classic Malts, Bulleit Bourbon, George Dickel, Crown Royal, Bushmills, and Diageo&apos;s
-            acclaimed Orphan Barrel project. Along the way, his mentor was Evan Cattanach — himself a
-            Whisky Magazine Hall of Fame inductee — a lineage that speaks to where Steve sits in this world.
+            His career reads like a tour through the greatest names in the spirit world: the Classic
+            Malts of Scotland, Johnnie Walker, Bulleit Bourbon and Rye, George Dickel Tennessee Whisky,
+            Crown Royal Canadian Whisky, and Bushmills Irish Whiskey. He is the founding member and
+            Senior Consultant of International Drinks Specialists, and his mentor was Evan
+            Cattanach — himself a Whisky Magazine Hall of Fame inductee — a lineage that speaks to
+            exactly where Steve sits in this world.
           </p>
           <p>
-            But what sets Steve apart is not his résumé. It&apos;s what he did with it. He co-created
-            the US Bartender&apos;s Guild Master Accreditation Program, investing his knowledge into the
-            careers of an entire generation of bartenders. He wrote about spirits. He hosted a nationally
-            syndicated radio program alongside Marcy Smothers and celebrity chef Guy Fieri. He gave the
+            But what sets Steve apart is not his résumé. It&apos;s what he did with it. He co-founded
+            the US Bartenders&apos; Guild Master Accreditation Program, investing his knowledge into
+            the careers of an entire generation of bartenders. He wrote extensively about spirits. He
+            hosted a nationally syndicated radio program alongside Marcy Smothers and celebrity chef
+            Guy Fieri, bringing the joy of food and drink to audiences across the country. He gave the
             industry more than it gave him.
           </p>
           <p>
-            A graduate of the University of Arizona, Steve is also an ordained Episcopal priest, holding
-            graduate credentials in theology from Oxford University and a Master of Divinity from the
-            Episcopal Church Divinity School of the Pacific. He is, in every sense, a man of genuine spirit.
+            The honors followed. In 2010 he was created a{' '}
+            <em>Keeper of the Quaich</em> at Blair Castle in Scotland — an honor reserved only for the
+            elite of the Scotch Whisky world. In 2015, Whisky Magazine inducted him into its Hall of
+            Fame, making him the 25th person ever to receive that distinction, alongside Al Young of
+            Four Roses and Bill Samuels Jr. of Maker&apos;s Mark. In 2016, at the Tales of the Cocktail
+            Spirited Awards in New Orleans, the US Bartenders&apos; Guild honored him with its
+            Lifetime Achievement Award. He has judged international spirits competitions for nearly
+            two decades — including the San Francisco World Spirits Competition since its founding, the
+            International Wine &amp; Spirit Competition as a Chairing Judge, and the World Whisky
+            Awards as US Chair for American Whiskies.
+          </p>
+          <p>
+            A graduate of the University of Arizona, Steve is also an ordained Episcopal priest. He
+            holds graduate credentials in theology from Oxford University and a Master of Divinity
+            from the Church Divinity School of the Pacific in Berkeley. He has served as an assisting
+            priest at Grace Cathedral on Nob Hill in San Francisco. He is, in every sense, a man of
+            genuine spirit.
           </p>
         </div>
       </section>

@@ -1,7 +1,8 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { User, Maximize2, Search } from 'lucide-react'
+import Image from 'next/image'
+import { User, Maximize2, Search, Play } from 'lucide-react'
 import { Submission } from '@/lib/types'
 import MemoryModal from './MemoryModal'
 
@@ -46,22 +47,28 @@ function GalleryCard({
     >
       {/* Photo / video — only shown if media exists */}
       {submission.photo_url ? (
-        <div style={{ width: '100%', background: '#F0E8DC', position: 'relative' }}>
+        <div style={{ position: 'relative', width: '100%', paddingBottom: '66%', background: '#F0E8DC' }}>
           {video ? (
-            <video
-              src={submission.photo_url}
-              playsInline
-              muted
-              autoPlay
-              loop
-              style={{ width: '100%', display: 'block' }}
-            />
+            <div style={{
+              position: 'absolute', inset: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: '#1C1917',
+            }}>
+              <div style={{
+                width: 64, height: 64, borderRadius: '50%',
+                background: 'rgba(255,255,255,0.15)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <Play size={28} color="#fff" fill="#fff" />
+              </div>
+            </div>
           ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={submission.photo_url}
               alt={submission.title}
-              style={{ width: '100%', height: 'auto', display: 'block' }}
+              fill
+              sizes="(min-width: 768px) 50vw, 100vw"
+              style={{ objectFit: 'cover' }}
             />
           )}
 

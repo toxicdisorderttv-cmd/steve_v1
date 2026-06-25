@@ -119,7 +119,9 @@ export default function HomePage() {
           <p>
             His career reads like a tour through the greatest names in the spirit world: the Classic
             Malts of Scotland, Johnnie Walker, Bulleit Bourbon and Rye, George Dickel Tennessee Whisky,
-            Crown Royal Canadian Whisky, and Bushmills Irish Whiskey. He is the founding member and
+            Crown Royal Canadian Whisky, and Bushmills Irish Whiskey. His legacy with Bulleit is
+            memorialised at the distillery in Shelbyville, Kentucky, where his portrait hangs alongside
+            a plaque reading &ldquo;Pioneer of Market Expansion.&rdquo; He is the founding member and
             Senior Consultant of International Drinks Specialists, and his mentor was Evan
             Cattanach — himself a Whisky Magazine Hall of Fame inductee — a lineage that speaks to
             exactly where Steve sits in this world.
@@ -215,6 +217,50 @@ export default function HomePage() {
               </h3>
               <p style={{ fontSize: '0.93rem', color: 'var(--secondary)', lineHeight: 1.7, margin: 0 }}>
                 Steven Beal on the craft of Scotch whisky, what separates an exceptional dram, and how to share that knowledge with guests.
+              </p>
+              <span style={{ display: 'inline-block', marginTop: 16, fontSize: '0.85rem', fontFamily: 'var(--font-mono)', color: 'var(--amber)' }}>
+                Read article →
+              </span>
+            </article>
+          </a>
+
+          <a
+            href="https://whiskycast.com/whisky-magazine-names-3-to-hall-of-fame/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="press-link"
+          >
+            <article className="press-card">
+              <span style={{ fontSize: '0.78rem', fontFamily: 'var(--font-mono)', color: 'var(--amber)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                WhiskyCast · February 2015
+              </span>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', fontWeight: 700, margin: '10px 0 10px', lineHeight: 1.25 }}>
+                &ldquo;Whisky Magazine Names 3 to Hall of Fame&rdquo;
+              </h3>
+              <p style={{ fontSize: '0.93rem', color: 'var(--secondary)', lineHeight: 1.7, margin: 0 }}>
+                Coverage of Steve&apos;s 2015 induction into the Whisky Magazine Hall of Fame alongside Bill Samuels Jr. of Maker&apos;s Mark and Al Young of Four Roses.
+              </p>
+              <span style={{ display: 'inline-block', marginTop: 16, fontSize: '0.85rem', fontFamily: 'var(--font-mono)', color: 'var(--amber)' }}>
+                Read article →
+              </span>
+            </article>
+          </a>
+
+          <a
+            href="https://www.gobourbon.com/bulleit-legacy-on-the-line/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="press-link"
+          >
+            <article className="press-card">
+              <span style={{ fontSize: '0.78rem', fontFamily: 'var(--font-mono)', color: 'var(--amber)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                The Bourbon Review · October 2019
+              </span>
+              <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', fontWeight: 700, margin: '10px 0 10px', lineHeight: 1.25 }}>
+                &ldquo;Bulleit Legacy On The Line&rdquo;
+              </h3>
+              <p style={{ fontSize: '0.93rem', color: 'var(--secondary)', lineHeight: 1.7, margin: 0 }}>
+                Steve is quoted extensively on his two decades building the Bulleit brand — the brand whose distillery now displays his portrait with a plaque reading &ldquo;Pioneer of Market Expansion.&rdquo;
               </p>
               <span style={{ display: 'inline-block', marginTop: 16, fontSize: '0.85rem', fontFamily: 'var(--font-mono)', color: 'var(--amber)' }}>
                 Read article →

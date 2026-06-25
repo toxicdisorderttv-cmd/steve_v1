@@ -3,6 +3,8 @@ import Image from 'next/image'
 import { supabaseAdmin } from '@/lib/supabase'
 import { HERO_IMAGE } from '@/lib/config'
 
+export const dynamic = 'force-dynamic'
+
 export default async function HomePage() {
   let memoryCount = 0
   try {

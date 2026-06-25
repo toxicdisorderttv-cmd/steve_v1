@@ -52,11 +52,12 @@ export async function POST(req: NextRequest) {
     let photo_url = ''
     let resolved_media_type = 'text'
 
-    // Video uploaded client-side — URL arrives ready-made
+    // Media uploaded client-side — URL arrives ready-made (bypasses Vercel's 4.5 MB body limit)
     const preUploadedUrl = (formData.get('photo_url') as string)?.trim()
+    const preUploadedMediaType = (formData.get('media_type') as string)?.trim()
     if (preUploadedUrl) {
       photo_url = preUploadedUrl
-      resolved_media_type = 'video'
+      resolved_media_type = preUploadedMediaType === 'image' ? 'image' : 'video'
     } else if (photo && photo.size > 0) {
       const isImage = photo.type.startsWith('image/')
       if (!isImage) {

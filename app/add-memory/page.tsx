@@ -185,25 +185,22 @@ export default function AddMemoryPage() {
       formData.append('submitter_email', email)
       formData.append('relationship', relationship || 'other')
 
-      if (file && mediaKind === 'video') {
-        // Videos upload directly to Supabase from the browser — bypasses Vercel's 4.5 MB API limit
+      if (file && (mediaKind === 'video' || mediaKind === 'image')) {
+        // Upload directly to Supabase from the browser — bypasses Vercel's 4.5 MB API body limit
         const { createClient } = await import('@supabase/supabase-js')
         const supabase = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
         )
-        const ext = file.name.split('.').pop()?.toLowerCase() ?? 'mp4'
+        const ext = file.name.split('.').pop()?.toLowerCase() ?? (mediaKind === 'video' ? 'mp4' : 'jpg')
         const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
         const { error: uploadError } = await supabase.storage
           .from('photos')
           .upload(filename, file, { contentType: file.type })
-        if (uploadError) throw new Error('Video upload failed. Please try again.')
+        if (uploadError) throw new Error(`${mediaKind === 'video' ? 'Video' : 'Image'} upload failed. Please try again.`)
         const { data: urlData } = supabase.storage.from('photos').getPublicUrl(filename)
         formData.append('photo_url', urlData.publicUrl)
-        formData.append('media_type', 'video')
-      } else if (file && mediaKind === 'image') {
-        formData.append('photo', file)
-        formData.append('media_type', 'image')
+        formData.append('media_type', mediaKind)
       } else {
         formData.append('media_type', 'text')
       }

@@ -48,17 +48,26 @@ function GalleryCard({
       {submission.photo_url ? (
         <div style={{ position: 'relative', width: '100%', paddingBottom: '66%', background: '#F0E8DC' }}>
           {video ? (
-            <div style={{
-              position: 'absolute', inset: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: '#1C1917',
-            }}>
+            <div style={{ position: 'absolute', inset: 0 }}>
+              <video
+                src={submission.photo_url}
+                muted
+                playsInline
+                preload="metadata"
+                style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+                onLoadedMetadata={e => { e.currentTarget.currentTime = 0.1 }}
+              />
               <div style={{
-                width: 64, height: 64, borderRadius: '50%',
-                background: 'rgba(255,255,255,0.15)',
+                position: 'absolute', inset: 0,
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
               }}>
-                <Play size={28} color="#fff" fill="#fff" />
+                <div style={{
+                  width: 56, height: 56, borderRadius: '50%',
+                  background: 'rgba(0,0,0,0.45)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <Play size={24} color="#fff" fill="#fff" />
+                </div>
               </div>
             </div>
           ) : (

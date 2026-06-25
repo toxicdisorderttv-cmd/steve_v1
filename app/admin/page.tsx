@@ -1,8 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
-import Image from 'next/image'
-import { Check, X, Mail, User, RefreshCw, Lock, Eye } from 'lucide-react'
+import { Check, X, Mail, User, RefreshCw, Lock, Eye, Trash2 } from 'lucide-react'
 import { Submission } from '@/lib/types'
 
 type Tab = 'pending' | 'approved' | 'rejected'
@@ -112,11 +111,13 @@ function AdminLogin({ onLogin }: { onLogin: () => void }) {
 function SubmissionRow({
   sub,
   onAction,
+  onDelete,
 }: {
   sub: Submission
   onAction: (id: string, action: 'approved' | 'rejected') => void
+  onDelete: (id: string) => void
 }) {
-  const [loading, setLoading] = useState<'approved' | 'rejected' | null>(null)
+  const [loading, setLoading] = useState<'approved' | 'rejected' | 'delete' | null>(null)
 
   const act = async (action: 'approved' | 'rejected') => {
     setLoading(action)
@@ -127,6 +128,20 @@ function SubmissionRow({
         body: JSON.stringify({ status: action }),
       })
       onAction(sub.id, action)
+    } finally {
+      setLoading(null)
+    }
+  }
+
+  const del = async () => {
+    if (!confirm(`Delete "${sub.title}" by ${sub.submitter_name}? This cannot be undone.`)) return
+    setLoading('delete')
+    try {
+      await fetch(`/api/admin/submissions/${sub.id}`, {
+        method: 'DELETE',
+        headers: { 'x-admin-password': 'codex' },
+      })
+      onDelete(sub.id)
     } finally {
       setLoading(null)
     }
@@ -143,16 +158,28 @@ function SubmissionRow({
         flexDirection: 'column',
       }}
     >
-      {/* Photo */}
-      <div style={{ position: 'relative', width: '100%', paddingBottom: '55%', background: '#E8DDD0' }}>
-        <Image
-          src={sub.photo_url}
-          alt={sub.title}
-          fill
-          style={{ objectFit: 'cover' }}
-          sizes="(max-width: 768px) 100vw, 50vw"
-        />
-      </div>
+      {/* Photo / video */}
+      {sub.photo_url ? (
+        <div style={{ position: 'relative', width: '100%', paddingBottom: '55%', background: '#E8DDD0' }}>
+          {sub.media_type === 'video' ? (
+            <video
+              src={sub.photo_url}
+              muted
+              playsInline
+              preload="metadata"
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+              onLoadedMetadata={e => { e.currentTarget.currentTime = 0.1 }}
+            />
+          ) : (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={sub.photo_url}
+              alt={sub.title}
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
+            />
+          )}
+        </div>
+      ) : null}
 
       {/* Details */}
       <div style={{ padding: 20, flex: 1 }}>
@@ -251,6 +278,20 @@ function SubmissionRow({
           >
             <X size={15} /> {sub.status === 'rejected' ? 'Rejected' : 'Reject'}
           </button>
+          <button
+            onClick={del}
+            disabled={!!loading}
+            title="Delete permanently"
+            style={{
+              width: 42, display: 'flex', alignItems: 'center', justifyContent: 'center',
+              padding: '10px', background: '#FFF5F5',
+              color: '#991B1B', border: '1px solid #FCA5A5', borderRadius: 4,
+              cursor: loading ? 'not-allowed' : 'pointer',
+              opacity: loading === 'delete' ? 0.6 : 1, flexShrink: 0,
+            }}
+          >
+            <Trash2 size={15} />
+          </button>
         </div>
       </div>
     </div>
@@ -292,6 +333,10 @@ export default function AdminPage() {
     setSubmissions(prev =>
       prev.map(s => (s.id === id ? { ...s, status: action } : s))
     )
+  }
+
+  const handleDelete = (id: string) => {
+    setSubmissions(prev => prev.filter(s => s.id !== id))
   }
 
   if (!authed) return <AdminLogin onLogin={() => setAuthed(true)} />
@@ -399,7 +444,7 @@ export default function AdminPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {filtered.map(s => (
-            <SubmissionRow key={s.id} sub={s} onAction={handleAction} />
+            <SubmissionRow key={s.id} sub={s} onAction={handleAction} onDelete={handleDelete} />
           ))}
         </div>
       )}

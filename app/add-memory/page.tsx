@@ -121,6 +121,28 @@ const hintStyle: React.CSSProperties = {
   lineHeight: 1.65,
 }
 
+async function compressImage(file: File, maxPx = 1800, quality = 0.85): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    const url = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(url)
+      let { width, height } = img
+      if (width > maxPx || height > maxPx) {
+        if (width >= height) { height = Math.round((height * maxPx) / width); width = maxPx }
+        else { width = Math.round((width * maxPx) / height); height = maxPx }
+      }
+      const canvas = document.createElement('canvas')
+      canvas.width = width
+      canvas.height = height
+      canvas.getContext('2d')!.drawImage(img, 0, 0, width, height)
+      canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('Compression failed')), 'image/jpeg', quality)
+    }
+    img.onerror = reject
+    img.src = url
+  })
+}
+
 function getMediaKind(file: File): MediaKind | null {
   if (file.type.startsWith('image/')) return 'image'
   if (file.type.startsWith('video/')) return 'video'
@@ -192,11 +214,18 @@ export default function AddMemoryPage() {
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
         )
-        const ext = file.name.split('.').pop()?.toLowerCase() ?? (mediaKind === 'video' ? 'mp4' : 'jpg')
+        let uploadFile: Blob | File = file
+        let contentType = file.type
+        let ext = file.name.split('.').pop()?.toLowerCase() ?? (mediaKind === 'video' ? 'mp4' : 'jpg')
+        if (mediaKind === 'image') {
+          uploadFile = await compressImage(file)
+          contentType = 'image/jpeg'
+          ext = 'jpg'
+        }
         const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
         const { error: uploadError } = await supabase.storage
           .from('photos')
-          .upload(filename, file, { contentType: file.type })
+          .upload(filename, uploadFile, { contentType })
         if (uploadError) throw new Error(`${mediaKind === 'video' ? 'Video' : 'Image'} upload failed. Please try again.`)
         const { data: urlData } = supabase.storage.from('photos').getPublicUrl(filename)
         formData.append('photo_url', urlData.publicUrl)

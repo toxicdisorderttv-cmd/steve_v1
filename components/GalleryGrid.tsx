@@ -52,8 +52,8 @@ function GalleryCard({
               src={submission.photo_url}
               playsInline
               muted
-              preload="metadata"
-              controls
+              autoPlay
+              loop
               style={{ width: '100%', display: 'block' }}
             />
           ) : (

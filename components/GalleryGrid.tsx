@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import Image from 'next/image'
 import { User, Maximize2, Search, Play } from 'lucide-react'
 import { Submission } from '@/lib/types'
 import MemoryModal from './MemoryModal'
@@ -63,12 +62,11 @@ function GalleryCard({
               </div>
             </div>
           ) : (
-            <Image
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
               src={submission.photo_url}
               alt={submission.title}
-              fill
-              sizes="(min-width: 768px) 50vw, 100vw"
-              style={{ objectFit: 'cover' }}
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
             />
           )}
 

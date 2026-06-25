@@ -1,7 +1,6 @@
 'use client'
 
 import { useEffect } from 'react'
-import Image from 'next/image'
 import { X, User } from 'lucide-react'
 import { Submission } from '@/lib/types'
 
@@ -90,13 +89,10 @@ export default function MemoryModal({
                 style={{ width: '100%', display: 'block', maxHeight: 640, objectFit: 'contain' }}
               />
             ) : (
-              <Image
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
                 src={submission.photo_url}
                 alt={submission.title}
-                width={0}
-                height={0}
-                sizes="960px"
-                priority
                 style={{ width: '100%', height: 'auto', display: 'block', maxHeight: 640, objectFit: 'contain' }}
               />
             )}

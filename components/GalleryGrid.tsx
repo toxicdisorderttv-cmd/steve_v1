@@ -52,6 +52,8 @@ function GalleryCard({
               src={submission.photo_url}
               playsInline
               muted
+              preload="metadata"
+              controls
               style={{ width: '100%', display: 'block' }}
             />
           ) : (
@@ -253,7 +255,7 @@ export default function GalleryGrid({ submissions }: { submissions: Submission[]
           No memories match that search.
         </p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10" style={{ alignItems: 'start' }}>
           {visible.map(s => (
             <GalleryCard key={s.id} submission={s} onClick={() => setSelected(s)} />
           ))}

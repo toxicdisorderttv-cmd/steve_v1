@@ -171,31 +171,20 @@ export default function HomePage() {
         </h2>
         <span className="amber-rule" style={{ marginBottom: 36 }} />
 
+        <style>{`
+          .press-card { border: 1px solid var(--border); border-radius: 5px; padding: 24px 26px; height: 100%; transition: border-color 0.15s, box-shadow 0.15s; background: #fff; }
+          .press-card:hover { border-color: var(--amber); box-shadow: 0 4px 16px rgba(0,0,0,0.07); }
+          .press-link { text-decoration: none; color: inherit; display: block; }
+        `}</style>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <a
             href="https://californiafreemason.org/2021/03/22/the-spirit-guide/"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+            className="press-link"
           >
-            <article
-              style={{
-                border: '1px solid var(--border)',
-                borderRadius: 5,
-                padding: '24px 26px',
-                height: '100%',
-                transition: 'border-color 0.15s, box-shadow 0.15s',
-                background: '#fff',
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.borderColor = 'var(--amber)'
-                ;(e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(0,0,0,0.07)'
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'
-                ;(e.currentTarget as HTMLElement).style.boxShadow = 'none'
-              }}
-            >
+            <article className="press-card">
               <span style={{ fontSize: '0.78rem', fontFamily: 'var(--font-mono)', color: 'var(--amber)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                 California Freemason Magazine · March 2021
               </span>
@@ -215,26 +204,9 @@ export default function HomePage() {
             href="https://www.barandrestaurant.com/operations/scoop-scotch-steven-beal"
             target="_blank"
             rel="noopener noreferrer"
-            style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+            className="press-link"
           >
-            <article
-              style={{
-                border: '1px solid var(--border)',
-                borderRadius: 5,
-                padding: '24px 26px',
-                height: '100%',
-                transition: 'border-color 0.15s, box-shadow 0.15s',
-                background: '#fff',
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.borderColor = 'var(--amber)'
-                ;(e.currentTarget as HTMLElement).style.boxShadow = '0 4px 16px rgba(0,0,0,0.07)'
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.borderColor = 'var(--border)'
-                ;(e.currentTarget as HTMLElement).style.boxShadow = 'none'
-              }}
-            >
+            <article className="press-card">
               <span style={{ fontSize: '0.78rem', fontFamily: 'var(--font-mono)', color: 'var(--amber)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                 Bar &amp; Restaurant Magazine
               </span>

@@ -144,14 +144,17 @@ function GalleryCard({
         {/* Divider */}
         <div style={{ borderTop: '1px solid var(--border)' }} />
 
-        {/* Story — always fully shown */}
+        {/* Story — clamped to 4 lines; full text shown in modal */}
         <p
           style={{
             fontSize: '0.88rem',
             color: 'var(--secondary)',
             lineHeight: 1.7,
-            whiteSpace: 'pre-wrap',
             margin: 0,
+            display: '-webkit-box',
+            WebkitLineClamp: 4,
+            WebkitBoxOrient: 'vertical',
+            overflow: 'hidden',
           }}
         >
           {submission.description}

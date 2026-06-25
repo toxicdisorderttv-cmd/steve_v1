@@ -16,6 +16,56 @@ async function compressImage(buffer: Buffer): Promise<Buffer> {
     .toBuffer()
 }
 
+async function sendEmails(opts: {
+  submitter_name: string
+  submitter_email: string
+  title: string
+  status: string
+}) {
+  const apiKey = process.env.RESEND_API_KEY
+  const adminEmail = process.env.ADMIN_EMAIL
+  const fromEmail = process.env.FROM_EMAIL
+  if (!apiKey || !adminEmail || !fromEmail) return
+
+  const { Resend } = await import('resend')
+  const resend = new Resend(apiKey)
+
+  const adminPanel = `${process.env.NEXT_PUBLIC_SITE_URL}/admin`
+  const autoApproved = opts.status === 'approved'
+
+  // Admin notification
+  await resend.emails.send({
+    from: fromEmail,
+    to: adminEmail,
+    subject: `New memory submitted: "${opts.title}"`,
+    html: `
+      <p>Hi,</p>
+      <p><strong>${opts.submitter_name}</strong> just submitted a memory titled <strong>"${opts.title}"</strong>.</p>
+      ${autoApproved
+        ? `<p>It has been <strong>automatically approved</strong> and is now live on the site.</p>`
+        : `<p>It is currently <strong>pending review</strong> — visit the admin panel to approve or reject it.</p>`
+      }
+      <p><a href="${adminPanel}">Open Admin Panel →</a></p>
+    `,
+  }).catch(console.error)
+
+  // Submitter confirmation
+  await resend.emails.send({
+    from: fromEmail,
+    to: opts.submitter_email,
+    subject: 'Thank you for sharing your memory of Steve',
+    html: `
+      <p>Hi ${opts.submitter_name},</p>
+      <p>Thank you so much for taking the time to share your memory of Steve. It means a great deal to him and to the whole family.</p>
+      ${autoApproved
+        ? `<p>Your memory is now live on the site. <a href="${process.env.NEXT_PUBLIC_SITE_URL}/stories">View it here →</a></p>`
+        : `<p>Your memory has been received and will appear on the site once reviewed.</p>`
+      }
+      <p>With gratitude,<br/>The Beal Family</p>
+    `,
+  }).catch(console.error)
+}
+
 export async function GET() {
   try {
     const db = supabaseAdmin()
@@ -77,6 +127,16 @@ export async function POST(req: NextRequest) {
       resolved_media_type = 'image'
     }
 
+    // Rate limit: more than 3 submissions from the same email in the last hour → pending review
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+    const { count: recentCount } = await db
+      .from('submissions')
+      .select('id', { count: 'exact', head: true })
+      .eq('submitter_email', submitter_email)
+      .gte('created_at', oneHourAgo)
+
+    const status = (recentCount ?? 0) >= 3 ? 'pending' : 'approved'
+
     const { error: insertError } = await db.from('submissions').insert({
       title,
       description,
@@ -85,12 +145,15 @@ export async function POST(req: NextRequest) {
       photo_url,
       media_type: resolved_media_type,
       relationship: ['family', 'friend', 'colleague', 'other'].includes(relationship) ? relationship : 'other',
-      status: 'approved',
+      status,
     })
 
     if (insertError) {
       return NextResponse.json({ error: 'Failed to save submission.' }, { status: 500 })
     }
+
+    // Send emails (silently skipped if RESEND_API_KEY / ADMIN_EMAIL / FROM_EMAIL not set)
+    await sendEmails({ submitter_name, submitter_email, title, status })
 
     return NextResponse.json({ success: true }, { status: 201 })
   } catch (err) {

@@ -175,10 +175,13 @@ function GalleryCard({
   )
 }
 
+const PAGE_SIZE = 12
+
 export default function GalleryGrid({ submissions }: { submissions: Submission[] }) {
   const [selected, setSelected] = useState<Submission | null>(null)
   const [filter, setFilter] = useState<Filter>('all')
   const [search, setSearch] = useState('')
+  const [displayCount, setDisplayCount] = useState(PAGE_SIZE)
 
   const visible = useMemo(() => {
     let list = submissions
@@ -193,6 +196,10 @@ export default function GalleryGrid({ submissions }: { submissions: Submission[]
     }
     return list
   }, [submissions, filter, search])
+
+  // Reset display count when filter/search changes
+  const displayed = visible.slice(0, displayCount)
+  const hasMore = visible.length > displayCount
 
   return (
     <>
@@ -272,11 +279,37 @@ export default function GalleryGrid({ submissions }: { submissions: Submission[]
           No memories match that search.
         </p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10" style={{ alignItems: 'start' }}>
-          {visible.map(s => (
-            <GalleryCard key={s.id} submission={s} onClick={() => setSelected(s)} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10" style={{ alignItems: 'start' }}>
+            {displayed.map(s => (
+              <GalleryCard key={s.id} submission={s} onClick={() => setSelected(s)} />
+            ))}
+          </div>
+
+          {hasMore && (
+            <div style={{ textAlign: 'center', marginTop: 48 }}>
+              <button
+                onClick={() => setDisplayCount(c => c + PAGE_SIZE)}
+                style={{
+                  padding: '14px 36px',
+                  fontSize: '0.95rem',
+                  fontFamily: 'var(--font-sans)',
+                  fontWeight: 500,
+                  border: '2px solid var(--amber)',
+                  borderRadius: 4,
+                  background: 'transparent',
+                  color: 'var(--amber)',
+                  cursor: 'pointer',
+                  transition: 'all 0.15s',
+                }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'var(--amber-light)' }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'transparent' }}
+              >
+                Load more memories ({visible.length - displayCount} remaining)
+              </button>
+            </div>
+          )}
+        </>
       )}
 
       {selected && (

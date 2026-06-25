@@ -1,7 +1,19 @@
 import Link from 'next/link'
 import Image from 'next/image'
+import { supabaseAdmin } from '@/lib/supabase'
+import { HERO_IMAGE } from '@/lib/config'
 
-export default function HomePage() {
+export default async function HomePage() {
+  let memoryCount = 0
+  try {
+    const db = supabaseAdmin()
+    const { count } = await db
+      .from('submissions')
+      .select('id', { count: 'exact', head: true })
+      .eq('status', 'approved')
+    memoryCount = count ?? 0
+  } catch { /* graceful fallback — page renders without count */ }
+
   return (
     <>
       {/* Hero */}
@@ -32,7 +44,7 @@ export default function HomePage() {
             }}
           >
             <Image
-              src="/hero.jpg"
+              src={HERO_IMAGE}
               alt="Steve Beal"
               width={260}
               height={340}
@@ -86,6 +98,127 @@ export default function HomePage() {
               <Link href="/stories" className="btn-primary">Read the Stories</Link>
               <Link href="/add-memory" className="btn-secondary">Share a Memory</Link>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Timeline */}
+      <section style={{ background: '#FAF5EE', borderBottom: '1px solid var(--border)' }}>
+        <style>{`
+          .tl-wrap { display:flex; flex-wrap:wrap; justify-content:center; }
+          .tl-node { display:flex; flex-direction:column; align-items:center; text-align:center; padding:40px 24px; flex:1; min-width:130px; }
+          .tl-node:not(:last-child) { border-right:1px solid var(--border); }
+          @media(max-width:640px){
+            .tl-node { min-width:48%; flex:none; border-right:none; border-bottom:1px solid var(--border); }
+            .tl-node:nth-child(odd){ border-right:1px solid var(--border); }
+          }
+        `}</style>
+        <div className="max-w-6xl mx-auto px-4">
+          <div style={{ textAlign:'center', paddingTop: 40, paddingBottom: 8 }}>
+            <span className="section-label">Career Arc</span>
+            <h2 style={{ fontFamily:'var(--font-serif)', fontSize:'clamp(1.6rem,2.5vw,2rem)', marginTop:10, marginBottom:4 }}>
+              A Life in Full
+            </h2>
+            <div style={{ display:'flex', justifyContent:'center', marginBottom:8 }}>
+              <span className="amber-rule" />
+            </div>
+          </div>
+          <div className="tl-wrap">
+
+            {/* University of Arizona */}
+            <div className="tl-node">
+              <svg viewBox="0 0 80 90" width="52" height="52" aria-label="University of Arizona">
+                <path d="M40 4L76 86H62L55 66H25L18 86H4L40 4Z" fill="#AB0520"/>
+                <path d="M40 22L52 56H28Z" fill="white"/>
+              </svg>
+              <span style={{ fontFamily:'var(--font-mono)', fontSize:'0.7rem', color:'var(--amber)', textTransform:'uppercase', letterSpacing:'0.09em', marginTop:14 }}>Education</span>
+              <span style={{ fontFamily:'var(--font-serif)', fontSize:'0.9rem', fontWeight:700, color:'var(--foreground)', marginTop:5, lineHeight:1.3 }}>University of Arizona</span>
+              <span style={{ fontSize:'0.76rem', color:'var(--secondary)', marginTop:3 }}>Tucson</span>
+            </div>
+
+            {/* University of Oxford */}
+            <div className="tl-node">
+              <svg viewBox="0 0 66 80" width="44" height="54" aria-label="University of Oxford">
+                <path d="M4 4H62V52Q33 80 33 80Q33 80 4 52Z" fill="#002147"/>
+                <rect x="16" y="18" width="34" height="24" rx="2" fill="#F5EDD6"/>
+                <line x1="33" y1="18" x2="33" y2="42" stroke="#002147" strokeWidth="2"/>
+                <line x1="19" y1="25" x2="31" y2="25" stroke="#8B7355" strokeWidth="1.2"/>
+                <line x1="19" y1="29" x2="31" y2="29" stroke="#8B7355" strokeWidth="1.2"/>
+                <line x1="19" y1="33" x2="31" y2="33" stroke="#8B7355" strokeWidth="1.2"/>
+                <line x1="35" y1="25" x2="47" y2="25" stroke="#8B7355" strokeWidth="1.2"/>
+                <line x1="35" y1="29" x2="47" y2="29" stroke="#8B7355" strokeWidth="1.2"/>
+                <line x1="35" y1="33" x2="47" y2="33" stroke="#8B7355" strokeWidth="1.2"/>
+              </svg>
+              <span style={{ fontFamily:'var(--font-mono)', fontSize:'0.7rem', color:'var(--amber)', textTransform:'uppercase', letterSpacing:'0.09em', marginTop:14 }}>Theology</span>
+              <span style={{ fontFamily:'var(--font-serif)', fontSize:'0.9rem', fontWeight:700, color:'var(--foreground)', marginTop:5, lineHeight:1.3 }}>University of Oxford</span>
+              <span style={{ fontSize:'0.76rem', color:'var(--secondary)', marginTop:3 }}>England</span>
+            </div>
+
+            {/* Episcopal Ordination */}
+            <div className="tl-node">
+              <svg viewBox="0 0 58 70" width="42" height="52" aria-label="Ordained Priest">
+                <path d="M4 4H54V48Q29 70 29 70Q29 70 4 48Z" fill="#003087"/>
+                <rect x="25" y="12" width="8" height="38" fill="white" rx="1"/>
+                <rect x="10" y="26" width="38" height="8" fill="white" rx="1"/>
+              </svg>
+              <span style={{ fontFamily:'var(--font-mono)', fontSize:'0.7rem', color:'var(--amber)', textTransform:'uppercase', letterSpacing:'0.09em', marginTop:14 }}>Ordained</span>
+              <span style={{ fontFamily:'var(--font-serif)', fontSize:'0.9rem', fontWeight:700, color:'var(--foreground)', marginTop:5, lineHeight:1.3 }}>Episcopal Priest</span>
+              <span style={{ fontSize:'0.76rem', color:'var(--secondary)', marginTop:3 }}>Grace Cathedral, SF</span>
+            </div>
+
+            {/* Keeper of the Quaich 2010 */}
+            <div className="tl-node">
+              <svg viewBox="0 0 80 44" width="64" height="36" aria-label="Keeper of the Quaich">
+                <ellipse cx="40" cy="10" rx="22" ry="7" fill="none" stroke="#92400E" strokeWidth="3"/>
+                <path d="M18 12Q18 30 40 32Q62 30 62 12" fill="none" stroke="#92400E" strokeWidth="3"/>
+                <line x1="18" y1="10" x2="6" y2="10" stroke="#92400E" strokeWidth="3.5" strokeLinecap="round"/>
+                <line x1="6" y1="10" x2="6" y2="16" stroke="#92400E" strokeWidth="3.5" strokeLinecap="round"/>
+                <line x1="62" y1="10" x2="74" y2="10" stroke="#92400E" strokeWidth="3.5" strokeLinecap="round"/>
+                <line x1="74" y1="10" x2="74" y2="16" stroke="#92400E" strokeWidth="3.5" strokeLinecap="round"/>
+              </svg>
+              <span style={{ fontFamily:'var(--font-mono)', fontSize:'0.7rem', color:'var(--amber)', textTransform:'uppercase', letterSpacing:'0.09em', marginTop:14 }}>2010</span>
+              <span style={{ fontFamily:'var(--font-serif)', fontSize:'0.9rem', fontWeight:700, color:'var(--foreground)', marginTop:5, lineHeight:1.3 }}>Keeper of the Quaich</span>
+              <span style={{ fontSize:'0.76rem', color:'var(--secondary)', marginTop:3 }}>Blair Castle, Scotland</span>
+            </div>
+
+            {/* Whisky Hall of Fame 2015 */}
+            <div className="tl-node">
+              <svg viewBox="0 0 60 68" width="44" height="52" aria-label="Whisky Hall of Fame">
+                <path d="M14 6H46Q52 6 52 20Q52 38 30 46Q8 38 8 20Q8 6 14 6Z" fill="none" stroke="#D97706" strokeWidth="3"/>
+                <path d="M8 10Q2 10 2 20Q2 28 8 28" fill="none" stroke="#D97706" strokeWidth="2.5" strokeLinecap="round"/>
+                <path d="M52 10Q58 10 58 20Q58 28 52 28" fill="none" stroke="#D97706" strokeWidth="2.5" strokeLinecap="round"/>
+                <line x1="30" y1="46" x2="30" y2="56" stroke="#D97706" strokeWidth="3"/>
+                <line x1="18" y1="56" x2="42" y2="56" stroke="#D97706" strokeWidth="3" strokeLinecap="round"/>
+                <text x="30" y="32" textAnchor="middle" fill="#D97706" fontSize="16">★</text>
+              </svg>
+              <span style={{ fontFamily:'var(--font-mono)', fontSize:'0.7rem', color:'var(--amber)', textTransform:'uppercase', letterSpacing:'0.09em', marginTop:14 }}>2015</span>
+              <span style={{ fontFamily:'var(--font-serif)', fontSize:'0.9rem', fontWeight:700, color:'var(--foreground)', marginTop:5, lineHeight:1.3 }}>Whisky Hall of Fame</span>
+              <span style={{ fontSize:'0.76rem', color:'var(--secondary)', marginTop:3 }}>Whisky Magazine, London</span>
+            </div>
+
+            {/* USBG Lifetime Achievement 2016 */}
+            <div className="tl-node">
+              <svg viewBox="0 0 60 72" width="44" height="52" aria-label="USBG Lifetime Achievement">
+                <path d="M22 4L30 20L38 4" fill="none" stroke="#D97706" strokeWidth="2.5" strokeLinejoin="round"/>
+                <circle cx="30" cy="48" r="22" fill="none" stroke="#D97706" strokeWidth="3"/>
+                <circle cx="30" cy="48" r="15" fill="none" stroke="#D97706" strokeWidth="1.5"/>
+                <text x="30" y="54" textAnchor="middle" fill="#D97706" fontSize="16">★</text>
+              </svg>
+              <span style={{ fontFamily:'var(--font-mono)', fontSize:'0.7rem', color:'var(--amber)', textTransform:'uppercase', letterSpacing:'0.09em', marginTop:14 }}>2016</span>
+              <span style={{ fontFamily:'var(--font-serif)', fontSize:'0.9rem', fontWeight:700, color:'var(--foreground)', marginTop:5, lineHeight:1.3 }}>Lifetime Achievement</span>
+              <span style={{ fontSize:'0.76rem', color:'var(--secondary)', marginTop:3 }}>US Bartenders&apos; Guild</span>
+            </div>
+
+            {/* SFWSC 2022 */}
+            <div className="tl-node">
+              <svg viewBox="0 0 60 60" width="44" height="44" aria-label="SFWSC Lifetime Achievement">
+                <path d="M30 4L36 21L53 22L40 33L44 50L30 41L16 50L20 33L7 22L24 21Z" fill="none" stroke="#D97706" strokeWidth="2.5" strokeLinejoin="round"/>
+              </svg>
+              <span style={{ fontFamily:'var(--font-mono)', fontSize:'0.7rem', color:'var(--amber)', textTransform:'uppercase', letterSpacing:'0.09em', marginTop:14 }}>2022</span>
+              <span style={{ fontFamily:'var(--font-serif)', fontSize:'0.9rem', fontWeight:700, color:'var(--foreground)', marginTop:5, lineHeight:1.3 }}>Lifetime Achievement</span>
+              <span style={{ fontSize:'0.76rem', color:'var(--secondary)', marginTop:3 }}>SF World Spirits Competition</span>
+            </div>
+
           </div>
         </div>
       </section>
@@ -292,6 +425,11 @@ export default function HomePage() {
         >
           People He&apos;s Touched
         </h2>
+        {memoryCount > 0 && (
+          <p style={{ fontFamily: 'var(--font-mono)', fontSize: '1rem', color: 'var(--amber)', marginBottom: 16, marginTop: 0 }}>
+            {memoryCount} {memoryCount === 1 ? 'memory' : 'memories'} shared so far
+          </p>
+        )}
         <p
           style={{
             fontSize: '1.3rem',

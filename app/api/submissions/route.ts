@@ -71,9 +71,9 @@ export async function GET() {
     const db = supabaseAdmin()
     const { data, error } = await db
       .from('submissions')
-      .select('id, title, photo_url, description, submitter_name, created_at, media_type, relationship')
+      .select('id, title, photo_url, photo_urls, description, submitter_name, created_at, media_type, relationship')
       .eq('status', 'approved')
-      .order('created_at', { ascending: true })
+      .order('created_at', { ascending: false })
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
     return NextResponse.json({ submissions: data })
@@ -105,6 +105,7 @@ export async function POST(req: NextRequest) {
     // Media uploaded client-side — URL arrives ready-made (bypasses Vercel's 4.5 MB body limit)
     const preUploadedUrl = (formData.get('photo_url') as string)?.trim()
     const preUploadedMediaType = (formData.get('media_type') as string)?.trim()
+    const photo_urls = (formData.get('photo_urls') as string)?.trim() || null
     if (preUploadedUrl) {
       photo_url = preUploadedUrl
       resolved_media_type = preUploadedMediaType === 'image' ? 'image' : 'video'
@@ -143,6 +144,7 @@ export async function POST(req: NextRequest) {
       submitter_name,
       submitter_email,
       photo_url,
+      photo_urls,
       media_type: resolved_media_type,
       relationship: ['family', 'friend', 'colleague', 'other'].includes(relationship) ? relationship : 'other',
       status,

@@ -2,6 +2,7 @@ export interface Submission {
   id: string
   title: string
   photo_url: string
+  photo_urls?: string | null
   description: string
   submitter_name: string
   submitter_email: string

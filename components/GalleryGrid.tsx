@@ -26,7 +26,16 @@ function GalleryCard({
   submission: Submission
   onClick: () => void
 }) {
-  const video = submission.media_type === 'video' || isVideoUrl(submission.photo_url)
+  const photos = useMemo(() => {
+    if (submission.photo_urls) {
+      try { return JSON.parse(submission.photo_urls) as string[] } catch {}
+    }
+    return submission.photo_url ? [submission.photo_url] : []
+  }, [submission.photo_urls, submission.photo_url])
+
+  const [photoIdx, setPhotoIdx] = useState(0)
+  const isVideo = submission.media_type === 'video' || (photos.length > 0 && isVideoUrl(photos[0]))
+  const hasMultiple = photos.length > 1
 
   return (
     <article
@@ -45,12 +54,12 @@ function GalleryCard({
       aria-label={`Read memory: ${submission.title}`}
     >
       {/* Photo / video — only shown if media exists */}
-      {submission.photo_url ? (
+      {photos.length > 0 ? (
         <div style={{ position: 'relative', width: '100%', paddingBottom: '66%', background: '#F0E8DC' }}>
-          {video ? (
+          {isVideo ? (
             <div style={{ position: 'absolute', inset: 0 }}>
               <video
-                src={submission.photo_url}
+                src={photos[0]}
                 muted
                 playsInline
                 preload="metadata"
@@ -73,10 +82,52 @@ function GalleryCard({
           ) : (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={submission.photo_url}
+              src={photos[photoIdx]}
               alt={submission.title}
               style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }}
             />
+          )}
+
+          {/* Slideshow controls */}
+          {hasMultiple && !isVideo && (
+            <>
+              <button
+                onClick={e => { e.stopPropagation(); setPhotoIdx(i => (i - 1 + photos.length) % photos.length) }}
+                aria-label="Previous photo"
+                style={{
+                  position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)',
+                  background: 'rgba(0,0,0,0.5)', border: 'none', borderRadius: '50%',
+                  width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', color: '#fff', fontSize: '1.2rem', zIndex: 2, lineHeight: 1,
+                }}
+              >
+                &#8249;
+              </button>
+              <button
+                onClick={e => { e.stopPropagation(); setPhotoIdx(i => (i + 1) % photos.length) }}
+                aria-label="Next photo"
+                style={{
+                  position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)',
+                  background: 'rgba(0,0,0,0.5)', border: 'none', borderRadius: '50%',
+                  width: 30, height: 30, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', color: '#fff', fontSize: '1.2rem', zIndex: 2, lineHeight: 1,
+                }}
+              >
+                &#8250;
+              </button>
+              <div style={{ position: 'absolute', bottom: 8, left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: 5, zIndex: 2 }}>
+                {photos.map((_, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      width: i === photoIdx ? 14 : 6, height: 6, borderRadius: 3,
+                      background: i === photoIdx ? '#fff' : 'rgba(255,255,255,0.5)',
+                      transition: 'all 0.2s',
+                    }}
+                  />
+                ))}
+              </div>
+            </>
           )}
 
           {/* Expand hint */}
@@ -89,6 +140,7 @@ function GalleryCard({
               display: 'flex', alignItems: 'center', gap: 7,
               color: '#fff', fontSize: '0.9rem', fontFamily: 'var(--font-mono)',
               opacity: 0, transition: 'opacity 0.2s',
+              zIndex: 3,
             }}
           >
             <Maximize2 size={15} /> expand

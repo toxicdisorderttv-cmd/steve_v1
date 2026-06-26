@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { Upload, X, CheckCircle, AlertCircle, ImagePlus, Film, HelpCircle, Camera, Type, AlignLeft, User, Mail, Heart } from 'lucide-react'
 
 type Status = 'idle' | 'uploading' | 'success' | 'error'
@@ -155,41 +155,61 @@ export default function AddMemoryPage() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [relationship, setRelationship] = useState('')
-  const [file, setFile] = useState<File | null>(null)
-  const [preview, setPreview] = useState<string | null>(null)
+  const [imageFiles, setImageFiles] = useState<File[]>([])
+  const [imagePreviews, setImagePreviews] = useState<string[]>([])
+  const [videoFile, setVideoFile] = useState<File | null>(null)
+  const [videoPreview, setVideoPreview] = useState<string | null>(null)
   const [mediaKind, setMediaKind] = useState<MediaKind | null>(null)
   const [dragging, setDragging] = useState(false)
   const [status, setStatus] = useState<Status>('idle')
   const [errorMsg, setErrorMsg] = useState('')
   const [showHelp, setShowHelp] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const addMoreRef = useRef<HTMLInputElement>(null)
+
+  const MAX_IMAGES = 5
 
   const handleFile = (f: File) => {
     const kind = getMediaKind(f)
-    if (!kind) {
-      setErrorMsg('Please select an image or video file.')
-      return
+    if (!kind) { setErrorMsg('Please select an image or video file.'); return }
+    if (kind === 'video') {
+      if (f.size > 200 * 1024 * 1024) { setErrorMsg('Videos must be under 200 MB. Try trimming it first.'); return }
+      setImageFiles([])
+      setImagePreviews([])
+      setVideoFile(f)
+      setVideoPreview(URL.createObjectURL(f))
+      setMediaKind('video')
+      setErrorMsg('')
+    } else {
+      if (videoFile) { setErrorMsg('Remove the video before adding photos.'); return }
+      if (imageFiles.length >= MAX_IMAGES) { setErrorMsg(`You can upload up to ${MAX_IMAGES} photos at a time.`); return }
+      setImageFiles(prev => [...prev, f])
+      setImagePreviews(prev => [...prev, URL.createObjectURL(f)])
+      setMediaKind('image')
+      setErrorMsg('')
     }
-    if (kind === 'video' && f.size > 200 * 1024 * 1024) {
-      setErrorMsg('Videos must be under 200 MB. Try trimming it first.')
-      return
-    }
-    setFile(f)
-    setMediaKind(kind)
-    setPreview(URL.createObjectURL(f))
-    setErrorMsg('')
   }
 
-  const onDrop = useCallback((e: React.DragEvent) => {
+  const onDrop = (e: React.DragEvent) => {
     e.preventDefault()
     setDragging(false)
     const dropped = e.dataTransfer.files[0]
     if (dropped) handleFile(dropped)
-  }, [])
+  }
 
-  const removeFile = () => {
-    setFile(null)
-    setPreview(null)
+  const removeImage = (idx: number) => {
+    setImagePreviews(prev => { URL.revokeObjectURL(prev[idx]); return prev.filter((_, i) => i !== idx) })
+    setImageFiles(prev => {
+      const next = prev.filter((_, i) => i !== idx)
+      if (next.length === 0) setMediaKind(null)
+      return next
+    })
+  }
+
+  const removeVideo = () => {
+    if (videoPreview) URL.revokeObjectURL(videoPreview)
+    setVideoFile(null)
+    setVideoPreview(null)
     setMediaKind(null)
     if (fileInputRef.current) fileInputRef.current.value = ''
   }
@@ -207,29 +227,42 @@ export default function AddMemoryPage() {
       formData.append('submitter_email', email)
       formData.append('relationship', relationship || 'other')
 
-      if (file && (mediaKind === 'video' || mediaKind === 'image')) {
+      if (imageFiles.length > 0) {
         // Upload directly to Supabase from the browser — bypasses Vercel's 4.5 MB API body limit
         const { createClient } = await import('@supabase/supabase-js')
         const supabase = createClient(
           process.env.NEXT_PUBLIC_SUPABASE_URL!,
           process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
         )
-        let uploadFile: Blob | File = file
-        let contentType = file.type
-        let ext = file.name.split('.').pop()?.toLowerCase() ?? (mediaKind === 'video' ? 'mp4' : 'jpg')
-        if (mediaKind === 'image') {
-          uploadFile = await compressImage(file)
-          contentType = 'image/jpeg'
-          ext = 'jpg'
+        const urls: string[] = []
+        for (let i = 0; i < imageFiles.length; i++) {
+          const compressed = await compressImage(imageFiles[i])
+          const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.jpg`
+          const { error: uploadError } = await supabase.storage
+            .from('photos')
+            .upload(filename, compressed, { contentType: 'image/jpeg' })
+          if (uploadError) throw new Error(`Failed to upload photo ${i + 1}. Please try again.`)
+          const { data: urlData } = supabase.storage.from('photos').getPublicUrl(filename)
+          urls.push(urlData.publicUrl)
         }
+        formData.append('photo_url', urls[0])
+        formData.append('photo_urls', JSON.stringify(urls))
+        formData.append('media_type', 'image')
+      } else if (videoFile) {
+        const { createClient } = await import('@supabase/supabase-js')
+        const supabase = createClient(
+          process.env.NEXT_PUBLIC_SUPABASE_URL!,
+          process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+        )
+        const ext = videoFile.name.split('.').pop()?.toLowerCase() ?? 'mp4'
         const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
         const { error: uploadError } = await supabase.storage
           .from('photos')
-          .upload(filename, uploadFile, { contentType })
-        if (uploadError) throw new Error(`${mediaKind === 'video' ? 'Video' : 'Image'} upload failed. Please try again.`)
+          .upload(filename, videoFile, { contentType: videoFile.type })
+        if (uploadError) throw new Error('Video upload failed. Please try again.')
         const { data: urlData } = supabase.storage.from('photos').getPublicUrl(filename)
         formData.append('photo_url', urlData.publicUrl)
-        formData.append('media_type', mediaKind)
+        formData.append('media_type', 'video')
       } else {
         formData.append('media_type', 'text')
       }
@@ -333,43 +366,94 @@ export default function AddMemoryPage() {
           {/* Media upload */}
           <div>
             <label style={labelStyle}>
-              Photo or Video{' '}
+              Photos or Video{' '}
               <span style={{ fontSize: '1.1rem', fontWeight: 400, color: 'var(--secondary)' }}>(optional)</span>
             </label>
             <p style={hintStyle}>
-              A photo or video makes your memory extra special — but a written story on its own is just as welcome.
-              Upload one photo (JPG, PNG, HEIC) or video (MP4, MOV — max 200 MB). Images are auto-resized.
+              Share one or more photos (up to {MAX_IMAGES}) — multiple photos display as a slideshow in the gallery. Or add a single video (MP4, MOV — max 200 MB). A written story on its own is just as welcome.
             </p>
 
-            {preview ? (
-              <div style={{ position: 'relative', display: 'inline-block', maxWidth: '100%' }}>
-                {mediaKind === 'video' ? (
-                  <video
-                    src={preview}
-                    controls
-                    style={{ maxWidth: '100%', maxHeight: 320, borderRadius: 4, border: '1px solid var(--border)', display: 'block' }}
-                  />
-                ) : (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={preview} alt="Preview"
-                    style={{ maxWidth: '100%', maxHeight: 320, borderRadius: 4, border: '1px solid var(--border)', display: 'block' }}
-                  />
+            {imageFiles.length > 0 ? (
+              <div>
+                {imageFiles.length > 1 && (
+                  <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start', padding: '12px 16px', marginBottom: 14, background: 'var(--amber-light)', border: '1px solid #F59E0B', borderRadius: 4 }}>
+                    <ImagePlus size={18} color="var(--amber)" style={{ flexShrink: 0, marginTop: 2 }} />
+                    <p style={{ margin: 0, fontSize: '0.93rem', color: '#92400E', lineHeight: 1.6 }}>
+                      <strong>{imageFiles.length} photos selected.</strong> These will display as a slideshow — visitors click the arrows to browse them.
+                    </p>
+                  </div>
                 )}
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: 14 }}>
+                  {imagePreviews.map((src, i) => (
+                    <div key={i} style={{ position: 'relative', width: 100, height: 100, borderRadius: 4, overflow: 'hidden', border: '2px solid var(--border)', flexShrink: 0 }}>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={src} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(i)}
+                        aria-label={`Remove photo ${i + 1}`}
+                        style={{ position: 'absolute', top: 4, right: 4, width: 22, height: 22, borderRadius: '50%', background: 'rgba(0,0,0,0.6)', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#fff', padding: 0 }}
+                      >
+                        <X size={12} />
+                      </button>
+                      {i === 0 && (
+                        <span style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'rgba(0,0,0,0.5)', color: '#fff', fontSize: '0.6rem', textAlign: 'center', padding: '3px 0', fontFamily: 'var(--font-mono)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>
+                          Cover
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+                  {imageFiles.length < MAX_IMAGES && (
+                    <button
+                      type="button"
+                      onClick={() => addMoreRef.current?.click()}
+                      style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '10px 18px', border: '2px dashed var(--amber)', borderRadius: 4, background: 'var(--amber-light)', color: 'var(--amber)', cursor: 'pointer', fontSize: '0.95rem', fontWeight: 500 }}
+                    >
+                      <ImagePlus size={16} />
+                      Add another photo
+                      <span style={{ fontSize: '0.8rem', opacity: 0.7 }}>({MAX_IMAGES - imageFiles.length} left)</span>
+                    </button>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => { setImageFiles([]); setImagePreviews([]); setMediaKind(null) }}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--secondary)', fontSize: '0.9rem', textDecoration: 'underline', padding: '10px 0' }}
+                  >
+                    Remove all
+                  </button>
+                </div>
+
+                <input
+                  ref={addMoreRef} type="file" accept="image/*"
+                  style={{ display: 'none' }}
+                  onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); if (addMoreRef.current) addMoreRef.current.value = '' }}
+                />
+              </div>
+            ) : videoFile ? (
+              <div style={{ position: 'relative', display: 'inline-block', maxWidth: '100%' }}>
+                <video
+                  src={videoPreview!}
+                  controls
+                  style={{ maxWidth: '100%', maxHeight: 320, borderRadius: 4, border: '1px solid var(--border)', display: 'block' }}
+                />
                 <button
-                  type="button" onClick={removeFile}
+                  type="button" onClick={removeVideo}
                   style={{
                     position: 'absolute', top: 8, right: 8,
                     background: 'rgba(0,0,0,0.55)', border: 'none', borderRadius: '50%',
                     width: 32, height: 32, display: 'flex', alignItems: 'center',
                     justifyContent: 'center', cursor: 'pointer', color: '#fff',
                   }}
-                  aria-label="Remove file"
+                  aria-label="Remove video"
                 >
                   <X size={16} />
                 </button>
                 <p style={{ fontSize: '0.85rem', color: 'var(--secondary)', marginTop: 8, fontFamily: 'var(--font-mono)' }}>
-                  {file?.name}
+                  {videoFile.name}
                 </p>
               </div>
             ) : (
@@ -413,7 +497,7 @@ export default function AddMemoryPage() {
               ref={fileInputRef} type="file"
               accept="image/*,video/mp4,video/mov,video/quicktime,video/webm"
               style={{ display: 'none' }}
-              onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f) }}
+              onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); if (fileInputRef.current) fileInputRef.current.value = '' }}
             />
           </div>
 

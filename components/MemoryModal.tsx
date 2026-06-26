@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { X, User } from 'lucide-react'
 import { Submission } from '@/lib/types'
 
@@ -15,18 +15,30 @@ export default function MemoryModal({
   submission: Submission
   onClose: () => void
 }) {
-  const hasMedia = !!submission.photo_url
-  const video = hasMedia && (submission.media_type === 'video' || isVideoUrl(submission.photo_url))
+  const photos = useMemo(() => {
+    if (submission.photo_urls) {
+      try { return JSON.parse(submission.photo_urls) as string[] } catch {}
+    }
+    return submission.photo_url ? [submission.photo_url] : []
+  }, [submission.photo_urls, submission.photo_url])
+
+  const [photoIdx, setPhotoIdx] = useState(0)
+  const hasMultiple = photos.length > 1
+  const isVideo = photos.length > 0 && (submission.media_type === 'video' || isVideoUrl(photos[0]))
 
   useEffect(() => {
-    const handle = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const handle = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowLeft' && hasMultiple) setPhotoIdx(i => (i - 1 + photos.length) % photos.length)
+      if (e.key === 'ArrowRight' && hasMultiple) setPhotoIdx(i => (i + 1) % photos.length)
+    }
     document.addEventListener('keydown', handle)
     document.body.style.overflow = 'hidden'
     return () => {
       document.removeEventListener('keydown', handle)
       document.body.style.overflow = ''
     }
-  }, [onClose])
+  }, [onClose, hasMultiple, photos.length])
 
   return (
     <div
@@ -70,7 +82,7 @@ export default function MemoryModal({
         </button>
 
         {/* Photo / video — only if media exists */}
-        {hasMedia && (
+        {photos.length > 0 && (
           <div
             style={{
               width: '100%',
@@ -78,11 +90,12 @@ export default function MemoryModal({
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              position: 'relative',
             }}
           >
-            {video ? (
+            {isVideo ? (
               <video
-                src={submission.photo_url}
+                src={photos[0]}
                 controls
                 playsInline
                 autoPlay
@@ -91,10 +104,63 @@ export default function MemoryModal({
             ) : (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={submission.photo_url}
+                src={photos[photoIdx]}
                 alt={submission.title}
                 style={{ width: '100%', height: 'auto', display: 'block', maxHeight: 640, objectFit: 'contain' }}
               />
+            )}
+
+            {/* Slideshow controls */}
+            {hasMultiple && !isVideo && (
+              <>
+                <button
+                  onClick={() => setPhotoIdx(i => (i - 1 + photos.length) % photos.length)}
+                  aria-label="Previous photo"
+                  style={{
+                    position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)',
+                    background: 'rgba(0,0,0,0.5)', border: 'none', borderRadius: '50%',
+                    width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', color: '#fff', fontSize: '1.5rem', zIndex: 5, lineHeight: 1,
+                  }}
+                >
+                  &#8249;
+                </button>
+                <button
+                  onClick={() => setPhotoIdx(i => (i + 1) % photos.length)}
+                  aria-label="Next photo"
+                  style={{
+                    position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)',
+                    background: 'rgba(0,0,0,0.5)', border: 'none', borderRadius: '50%',
+                    width: 44, height: 44, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', color: '#fff', fontSize: '1.5rem', zIndex: 5, lineHeight: 1,
+                  }}
+                >
+                  &#8250;
+                </button>
+                <div
+                  style={{
+                    position: 'absolute', bottom: 14, left: '50%', transform: 'translateX(-50%)',
+                    display: 'flex', gap: 8, alignItems: 'center', zIndex: 5,
+                    background: 'rgba(0,0,0,0.45)', borderRadius: 99, padding: '6px 14px',
+                  }}
+                >
+                  {photos.map((_, i) => (
+                    <button
+                      key={i}
+                      onClick={() => setPhotoIdx(i)}
+                      aria-label={`Photo ${i + 1}`}
+                      style={{
+                        width: i === photoIdx ? 18 : 7, height: 7, borderRadius: 3.5,
+                        background: i === photoIdx ? '#fff' : 'rgba(255,255,255,0.45)',
+                        border: 'none', cursor: 'pointer', padding: 0, transition: 'all 0.2s',
+                      }}
+                    />
+                  ))}
+                  <span style={{ color: '#fff', fontSize: '0.8rem', fontFamily: 'var(--font-mono)', marginLeft: 4 }}>
+                    {photoIdx + 1} / {photos.length}
+                  </span>
+                </div>
+              </>
             )}
           </div>
         )}

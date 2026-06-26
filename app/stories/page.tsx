@@ -10,10 +10,18 @@ async function getApprovedSubmissions(): Promise<Submission[]> {
     const db = supabaseAdmin()
     const { data, error } = await db
       .from('submissions')
-      .select('id, title, photo_url, description, submitter_name, created_at, media_type, relationship')
+      .select('id, title, photo_url, photo_urls, description, submitter_name, created_at, media_type, relationship')
       .eq('status', 'approved')
-      .order('created_at', { ascending: true })
-    if (error) return []
+      .order('created_at', { ascending: false })
+    if (error) {
+      // photo_urls column may not exist yet — fall back without it
+      const { data: d2 } = await db
+        .from('submissions')
+        .select('id, title, photo_url, description, submitter_name, created_at, media_type, relationship')
+        .eq('status', 'approved')
+        .order('created_at', { ascending: false })
+      return (d2 ?? []) as Submission[]
+    }
     return (data ?? []) as Submission[]
   } catch {
     return []

@@ -193,8 +193,32 @@ export default function AddMemoryPage() {
   const onDrop = (e: React.DragEvent) => {
     e.preventDefault()
     setDragging(false)
-    const dropped = e.dataTransfer.files[0]
-    if (dropped) handleFile(dropped)
+    const dropped = Array.from(e.dataTransfer.files)
+    if (dropped.length === 0) return
+
+    const firstKind = getMediaKind(dropped[0])
+    if (!firstKind) { setErrorMsg('Please select an image or video file.'); return }
+
+    if (firstKind === 'video') {
+      if (dropped[0].size > 200 * 1024 * 1024) { setErrorMsg('Videos must be under 200 MB. Try trimming it first.'); return }
+      setImageFiles([])
+      setImagePreviews([])
+      setVideoFile(dropped[0])
+      setVideoPreview(URL.createObjectURL(dropped[0]))
+      setMediaKind('video')
+      setErrorMsg('')
+    } else {
+      if (videoFile) { setErrorMsg('Remove the video before adding photos.'); return }
+      const slots = MAX_IMAGES - imageFiles.length
+      if (slots <= 0) { setErrorMsg(`You can upload up to ${MAX_IMAGES} photos at a time.`); return }
+      const newImages = dropped.filter(f => getMediaKind(f) === 'image').slice(0, slots)
+      if (newImages.length === 0) return
+      const newPreviews = newImages.map(f => URL.createObjectURL(f))
+      setImageFiles(prev => [...prev, ...newImages])
+      setImagePreviews(prev => [...prev, ...newPreviews])
+      setMediaKind('image')
+      setErrorMsg('')
+    }
   }
 
   const removeImage = (idx: number) => {
@@ -428,9 +452,20 @@ export default function AddMemoryPage() {
                 </div>
 
                 <input
-                  ref={addMoreRef} type="file" accept="image/*"
+                  ref={addMoreRef} type="file" accept="image/*" multiple
                   style={{ display: 'none' }}
-                  onChange={e => { const f = e.target.files?.[0]; if (f) handleFile(f); if (addMoreRef.current) addMoreRef.current.value = '' }}
+                  onChange={e => {
+                    const files = Array.from(e.target.files ?? [])
+                    const slots = MAX_IMAGES - imageFiles.length
+                    const newImages = files.slice(0, slots)
+                    if (newImages.length > 0) {
+                      const newPreviews = newImages.map(f => URL.createObjectURL(f))
+                      setImageFiles(prev => [...prev, ...newImages])
+                      setImagePreviews(prev => [...prev, ...newPreviews])
+                      setMediaKind('image')
+                    }
+                    if (addMoreRef.current) addMoreRef.current.value = ''
+                  }}
                 />
               </div>
             ) : videoFile ? (

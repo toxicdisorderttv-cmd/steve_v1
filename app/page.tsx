@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { supabaseAdmin } from '@/lib/supabase'
 import { HERO_IMAGE } from '@/lib/config'
+import PhotoArchive from '@/components/PhotoArchive'
 
 export const dynamic = 'force-dynamic'
 
@@ -295,29 +296,6 @@ export default async function HomePage() {
 
       {/* Photo Archive */}
       <section style={{ borderTop: '1px solid var(--border)', background: '#FAF5EE' }}>
-        <style>{`
-          .archive-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-          }
-          @media (max-width: 900px) { .archive-grid { grid-template-columns: repeat(3, 1fr); } }
-          @media (max-width: 600px) { .archive-grid { grid-template-columns: repeat(2, 1fr); } }
-          .archive-photo {
-            position: relative;
-            aspect-ratio: 4 / 3;
-            overflow: hidden;
-            border-radius: 3px;
-            border: 1px solid var(--border);
-            background: #E8DDD0;
-          }
-          .archive-photo img {
-            width: 100%; height: 100%;
-            object-fit: cover; display: block;
-            transition: transform 0.4s ease;
-          }
-          .archive-photo:hover img { transform: scale(1.04); }
-        `}</style>
         <div className="max-w-5xl mx-auto px-6 py-14 md:py-20">
           <span className="section-label">From the Archive</span>
           <h2
@@ -330,19 +308,8 @@ export default async function HomePage() {
           >
             A Life in Photographs
           </h2>
-          <span className="amber-rule" style={{ marginBottom: 36 }} />
-          <div className="archive-grid">
-            {[1,2,3,4,5,6,7,8,9,10,11].map(n => (
-              <div key={n} className="archive-photo">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={`/steve-photos/steve-${n}.jpg`}
-                  alt={`Steve Beal — photograph ${n}`}
-                  loading={n <= 4 ? 'eager' : 'lazy'}
-                />
-              </div>
-            ))}
-          </div>
+          <span className="amber-rule" style={{ marginBottom: 28 }} />
+          <PhotoArchive />
         </div>
       </section>
 

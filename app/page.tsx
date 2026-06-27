@@ -293,6 +293,59 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* Photo Archive */}
+      <section style={{ borderTop: '1px solid var(--border)', background: '#FAF5EE' }}>
+        <style>{`
+          .archive-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+          }
+          @media (max-width: 900px) { .archive-grid { grid-template-columns: repeat(3, 1fr); } }
+          @media (max-width: 600px) { .archive-grid { grid-template-columns: repeat(2, 1fr); } }
+          .archive-photo {
+            position: relative;
+            aspect-ratio: 4 / 3;
+            overflow: hidden;
+            border-radius: 3px;
+            border: 1px solid var(--border);
+            background: #E8DDD0;
+          }
+          .archive-photo img {
+            width: 100%; height: 100%;
+            object-fit: cover; display: block;
+            transition: transform 0.4s ease;
+          }
+          .archive-photo:hover img { transform: scale(1.04); }
+        `}</style>
+        <div className="max-w-5xl mx-auto px-6 py-14 md:py-20">
+          <span className="section-label">From the Archive</span>
+          <h2
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: 'clamp(2rem, 3.5vw, 2.8rem)',
+              marginTop: 14,
+              marginBottom: 4,
+            }}
+          >
+            A Life in Photographs
+          </h2>
+          <span className="amber-rule" style={{ marginBottom: 36 }} />
+          <div className="archive-grid">
+            {[1,2,3,4,5,6,7,8,9,10,11].map(n => (
+              <div key={n} className="archive-photo">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={`/steve-photos/steve-${n}.jpg`}
+                  alt={`Steve Beal — photograph ${n}`}
+                  loading={n <= 4 ? 'eager' : 'lazy'}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Press & Writing */}
       <section style={{ borderTop: '1px solid var(--border)' }} className="max-w-5xl mx-auto px-6 py-14">
         <span className="section-label">In the Press</span>
@@ -382,23 +435,23 @@ export default async function HomePage() {
           </a>
 
           <a
-            href="https://www.gobourbon.com/bulleit-legacy-on-the-line/"
+            href="https://www.whiskycompetition.com/tastingpanel/charles-maclean"
             target="_blank"
             rel="noopener noreferrer"
             className="press-link"
           >
             <article className="press-card">
               <span style={{ fontSize: '0.78rem', fontFamily: 'var(--font-mono)', color: 'var(--amber)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-                The Bourbon Review · October 2019
+                International Whisky Competition
               </span>
               <h3 style={{ fontFamily: 'var(--font-serif)', fontSize: '1.2rem', fontWeight: 700, margin: '10px 0 10px', lineHeight: 1.25 }}>
-                &ldquo;Bulleit Legacy On The Line&rdquo;
+                &ldquo;Steve Beal — Tasting Panel&rdquo;
               </h3>
               <p style={{ fontSize: '0.93rem', color: 'var(--secondary)', lineHeight: 1.7, margin: 0 }}>
-                Steve is quoted extensively on his two decades building the Bulleit brand — the brand whose distillery now displays his portrait with a plaque reading &ldquo;Pioneer of Market Expansion.&rdquo;
+                His official profile as a judge for the International Whisky Competition — recognising him as one of the world&apos;s most trusted spirits specialists with decades of high-level industry expertise.
               </p>
               <span style={{ display: 'inline-block', marginTop: 16, fontSize: '0.85rem', fontFamily: 'var(--font-mono)', color: 'var(--amber)' }}>
-                Read article →
+                View profile →
               </span>
             </article>
           </a>

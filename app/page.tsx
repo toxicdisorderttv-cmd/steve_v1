@@ -246,7 +246,7 @@ export default async function HomePage() {
           className="flex flex-col gap-7"
         >
           <p>
-            Steve Beal is among the most respected whisky authorities in America. One of only fifteen
+            Steve Beal is among the most respected whisky authorities in America. The first of only fifteen
             people ever named a Diageo Master of Whisky — a designation earned not in a classroom but
             across decades of genuine passion, relentless curiosity, and the kind of expertise that
             can only come from living inside a subject. For more than fifteen years he led Diageo&apos;s

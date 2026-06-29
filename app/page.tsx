@@ -78,7 +78,7 @@ export default async function HomePage() {
                 fontSize: '1.35rem',
                 fontStyle: 'italic',
                 fontFamily: 'var(--font-serif)',
-                color: 'var(--secondary)',
+                color: 'var(--foreground)',
                 marginBottom: 24,
                 lineHeight: 1.6,
               }}
@@ -88,7 +88,7 @@ export default async function HomePage() {
             <p
               style={{
                 fontSize: '1.3rem',
-                color: 'var(--secondary)',
+                color: 'var(--foreground)',
                 lineHeight: 1.85,
                 marginBottom: 40,
               }}
@@ -329,6 +329,9 @@ export default async function HomePage() {
           >
             A Life in Photographs
           </h2>
+          <p style={{ fontSize: '1.05rem', color: 'var(--secondary)', marginBottom: 20, fontFamily: 'var(--font-mono)', letterSpacing: '0.03em' }}>
+            Family · Friends · Associates · Business Partners
+          </p>
           <span className="amber-rule" style={{ marginBottom: 28 }} />
           <PhotoArchive />
         </div>

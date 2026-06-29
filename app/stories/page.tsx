@@ -71,6 +71,7 @@ export default async function StoriesPage() {
           >
             Every person below has been touched by Steve in some way — a career nudged,
             a glass shared, a lesson remembered. These are their stories.
+            We encourage you to share a personalised video message or photo — it would mean the world to him.
           </p>
           <Link href="/add-memory" className="btn-primary">
             Share Your Memory

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 
-const PHOTOS = Array.from({ length: 11 }, (_, i) => `/steve-photos/steve-${i + 1}.jpg`)
+const PHOTOS = Array.from({ length: 21 }, (_, i) => `/steve-photos/steve-${i + 1}.jpg`)
 
 export default function PhotoArchive() {
   const [selected, setSelected] = useState<number | null>(null)

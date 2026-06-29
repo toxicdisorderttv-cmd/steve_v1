@@ -87,8 +87,8 @@ export default function WelcomeOverlay() {
             marginBottom: 36,
           }}
         >
-          This site is a gift — a place for family and friends to share their memories,
-          photos, and videos about Steve. Here&apos;s how it works:
+          This is a gift for family, friends, and colleagues to share. If you have any
+          photos you&apos;d like to upload, please do so and write what it means to you.
         </p>
 
         {/* Steps */}

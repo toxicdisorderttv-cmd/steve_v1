@@ -31,7 +31,7 @@ export default async function HomePage() {
         <div className="dot-grid" />
 
         <div
-          className="max-w-6xl mx-auto px-6 py-16 md:py-24 flex flex-col md:flex-row items-start gap-12 md:gap-16"
+          className="max-w-6xl mx-auto px-6 py-16 md:py-24 flex flex-col md:flex-row md:items-center gap-10 md:gap-12"
           style={{ position: 'relative', zIndex: 1 }}
         >
           {/* Hero photo */}
@@ -39,7 +39,7 @@ export default async function HomePage() {
             className="fade-up"
             style={{
               flexShrink: 0,
-              width: 260,
+              width: 220,
               borderRadius: 4,
               overflow: 'hidden',
               border: '1px solid var(--border)',
@@ -49,15 +49,15 @@ export default async function HomePage() {
             <Image
               src={HERO_IMAGE}
               alt="Steve Beal"
-              width={260}
-              height={340}
+              width={220}
+              height={287}
               priority
               style={{ width: '100%', height: 'auto', display: 'block' }}
             />
           </div>
 
           {/* Text */}
-          <div style={{ maxWidth: 620, paddingTop: 12 }} className="fade-up">
+          <div style={{ flex: 1, minWidth: 0, paddingTop: 12 }} className="fade-up">
             <span className="section-label">A Tribute · San Francisco</span>
             <h1
               style={{
@@ -101,6 +101,26 @@ export default async function HomePage() {
               <Link href="/stories" className="btn-primary">Read the Stories</Link>
               <Link href="/add-memory" className="btn-secondary">Share a Memory</Link>
             </div>
+          </div>
+
+          {/* Quaich photo — right side, desktop only */}
+          <div
+            className="fade-up hidden md:block"
+            style={{
+              flexShrink: 0,
+              width: 210,
+              borderRadius: 4,
+              overflow: 'hidden',
+              border: '1px solid var(--border)',
+              boxShadow: '0 16px 48px rgba(0,0,0,0.12)',
+            }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/quaich.jpg"
+              alt="Steve Beal at the Keeper of the Quaich ceremony, Scotland"
+              style={{ width: '100%', height: 'auto', display: 'block' }}
+            />
           </div>
         </div>
       </section>

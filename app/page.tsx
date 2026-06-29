@@ -31,7 +31,7 @@ export default async function HomePage() {
         <div className="dot-grid" />
 
         <div
-          className="max-w-6xl mx-auto px-6 py-16 md:py-24 flex flex-col md:flex-row md:items-center gap-10 md:gap-16"
+          className="max-w-7xl mx-auto px-6 py-16 md:py-24 flex flex-col md:flex-row md:items-center gap-10 md:gap-14"
           style={{ position: 'relative', zIndex: 1 }}
         >
           {/* Hero photo */}
@@ -39,7 +39,7 @@ export default async function HomePage() {
             className="fade-up"
             style={{
               flexShrink: 0,
-              width: 260,
+              width: 320,
               borderRadius: 4,
               overflow: 'hidden',
               border: '1px solid var(--border)',
@@ -49,8 +49,8 @@ export default async function HomePage() {
             <Image
               src={HERO_IMAGE}
               alt="Steve Beal"
-              width={260}
-              height={339}
+              width={320}
+              height={427}
               priority
               style={{ width: '100%', height: 'auto', display: 'block' }}
             />
@@ -108,7 +108,7 @@ export default async function HomePage() {
             className="fade-up hidden md:block"
             style={{
               flexShrink: 0,
-              width: 250,
+              width: 320,
               borderRadius: 4,
               overflow: 'hidden',
               border: '1px solid var(--border)',

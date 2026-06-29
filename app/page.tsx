@@ -279,16 +279,17 @@ export default async function HomePage() {
             Four Roses and Bill Samuels Jr. of Maker&apos;s Mark. In 2016, at the Tales of the Cocktail
             Spirited Awards in New Orleans, the US Bartenders&apos; Guild honored him with its
             Lifetime Achievement Award. In 2022, the San Francisco World Spirits Competition honored
-            him with its inaugural Lifetime Achievement Award. He has judged international spirits
-            competitions for more than two decades — including the San Francisco World Spirits
+            him with its inaugural Lifetime Achievement Award. He has judged more than 25
+            international spirits competitions — including the San Francisco World Spirits
             Competition since its founding in 2000, the International Wine &amp; Spirit Competition
             as a Chairing Judge, and the World Whisky Awards as US Chair for American Whiskies.
+            In 2024, he was appointed Panel Chair of the International Whisky Competition.
           </p>
           <p>
             A graduate of the University of Arizona, Steve is also an ordained Episcopal priest. He
             holds graduate credentials in theology from Oxford University and a Master of Divinity
             from the Church Divinity School of the Pacific in Berkeley. He has served as an assisting
-            priest at Grace Cathedral on Nob Hill in San Francisco. He is, in every sense, a man of
+            priest at Grace Cathedral on Nob Hill in San Francisco for the last 25 years. He is, in every sense, a man of
             genuine spirit.
           </p>
         </div>

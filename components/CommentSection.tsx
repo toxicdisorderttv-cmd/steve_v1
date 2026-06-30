@@ -16,7 +16,7 @@ function timeAgo(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-export default function CommentSection({ submissionId }: { submissionId: string }) {
+export default function CommentSection({ submissionId, compact = false }: { submissionId: string; compact?: boolean }) {
   const [comments, setComments] = useState<Comment[]>([])
   const [loading, setLoading] = useState(true)
   const [name, setName] = useState('')
@@ -64,14 +64,14 @@ export default function CommentSection({ submissionId }: { submissionId: string 
   }
 
   return (
-    <div style={{ borderTop: '1px solid var(--border)', padding: '32px 48px 48px' }}>
+    <div style={{ borderTop: compact ? 'none' : '1px solid var(--border)', padding: compact ? '0' : '32px 48px 48px' }}>
       {/* Heading */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-        <MessageCircle size={20} color="var(--amber)" strokeWidth={1.75} />
+        <MessageCircle size={compact ? 16 : 20} color="var(--amber)" strokeWidth={1.75} />
         <h3
           style={{
             fontFamily: 'var(--font-serif)',
-            fontSize: '1.4rem',
+            fontSize: compact ? '1.05rem' : '1.4rem',
             fontWeight: 700,
             color: 'var(--foreground)',
             margin: 0,
@@ -86,37 +86,36 @@ export default function CommentSection({ submissionId }: { submissionId: string 
         style={{
           display: 'flex', gap: 10, alignItems: 'flex-start',
           background: 'var(--amber-light)', borderRadius: 4,
-          padding: '12px 16px', margin: '16px 0 24px',
+          padding: compact ? '10px 12px' : '12px 16px', margin: compact ? '12px 0 16px' : '16px 0 24px',
         }}
       >
         <Info size={16} color="var(--amber)" style={{ flexShrink: 0, marginTop: 2 }} />
-        <p style={{ fontSize: '0.88rem', color: 'var(--secondary)', lineHeight: 1.6, margin: 0, fontFamily: 'var(--font-mono)' }}>
-          Leave a kind word for Steve and his family below — just add your name and a short
-          message and hit &quot;Post Comment.&quot; Comments appear right away for everyone to see,
-          so please keep them warm and respectful.
+        <p style={{ fontSize: compact ? '0.82rem' : '0.88rem', color: 'var(--secondary)', lineHeight: 1.6, margin: 0, fontFamily: 'var(--font-mono)' }}>
+          Have something to say about this memory, or remember this moment yourself?
+          Add your name and a message below — comments appear right away for everyone to see.
         </p>
       </div>
 
       {/* Comment list */}
       {loading ? (
-        <p style={{ fontSize: '0.95rem', color: 'var(--secondary)' }}>Loading comments…</p>
+        <p style={{ fontSize: compact ? '0.85rem' : '0.95rem', color: 'var(--secondary)' }}>Loading comments…</p>
       ) : comments.length === 0 ? (
-        <p style={{ fontSize: '0.95rem', color: 'var(--secondary)', marginBottom: 24 }}>
+        <p style={{ fontSize: compact ? '0.85rem' : '0.95rem', color: 'var(--secondary)', marginBottom: compact ? 16 : 24 }}>
           No comments yet — be the first to share a word.
         </p>
       ) : (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 28 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: compact ? 12 : 16, marginBottom: compact ? 18 : 28 }}>
           {comments.map(c => (
-            <div key={c.id} style={{ borderBottom: '1px solid var(--border)', paddingBottom: 16 }}>
+            <div key={c.id} style={{ borderBottom: '1px solid var(--border)', paddingBottom: compact ? 12 : 16 }}>
               <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, marginBottom: 4 }}>
-                <span style={{ fontSize: '0.98rem', fontWeight: 600, color: 'var(--foreground)' }}>
+                <span style={{ fontSize: compact ? '0.88rem' : '0.98rem', fontWeight: 600, color: 'var(--foreground)' }}>
                   {c.commenter_name}
                 </span>
                 <span style={{ fontSize: '0.78rem', fontFamily: 'var(--font-mono)', color: 'var(--secondary)', whiteSpace: 'nowrap' }}>
                   {timeAgo(c.created_at)}
                 </span>
               </div>
-              <p style={{ fontSize: '0.95rem', color: 'var(--secondary)', lineHeight: 1.7, margin: 0, whiteSpace: 'pre-wrap' }}>
+              <p style={{ fontSize: compact ? '0.85rem' : '0.95rem', color: 'var(--secondary)', lineHeight: 1.7, margin: 0, whiteSpace: 'pre-wrap' }}>
                 {c.body}
               </p>
             </div>
@@ -125,7 +124,7 @@ export default function CommentSection({ submissionId }: { submissionId: string 
       )}
 
       {/* Form */}
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: compact ? 8 : 12 }}>
         <input
           type="text"
           value={name}
@@ -133,8 +132,8 @@ export default function CommentSection({ submissionId }: { submissionId: string 
           placeholder="Your name"
           maxLength={80}
           style={{
-            padding: '12px 14px',
-            fontSize: '0.98rem',
+            padding: compact ? '9px 12px' : '12px 14px',
+            fontSize: compact ? '0.88rem' : '0.98rem',
             fontFamily: 'var(--font-sans)',
             border: '1.5px solid var(--border)',
             borderRadius: 4,
@@ -147,10 +146,10 @@ export default function CommentSection({ submissionId }: { submissionId: string 
           onChange={e => setMessage(e.target.value)}
           placeholder="Write a comment…"
           maxLength={1000}
-          rows={3}
+          rows={compact ? 2 : 3}
           style={{
-            padding: '12px 14px',
-            fontSize: '0.98rem',
+            padding: compact ? '9px 12px' : '12px 14px',
+            fontSize: compact ? '0.88rem' : '0.98rem',
             fontFamily: 'var(--font-sans)',
             border: '1.5px solid var(--border)',
             borderRadius: 4,
@@ -160,7 +159,7 @@ export default function CommentSection({ submissionId }: { submissionId: string 
           }}
         />
         {error && (
-          <p style={{ fontSize: '0.88rem', color: '#B91C1C', margin: 0 }}>{error}</p>
+          <p style={{ fontSize: '0.85rem', color: '#B91C1C', margin: 0 }}>{error}</p>
         )}
         <button
           type="submit"
@@ -171,9 +170,10 @@ export default function CommentSection({ submissionId }: { submissionId: string 
             display: 'flex', alignItems: 'center', gap: 8,
             opacity: submitting ? 0.6 : 1,
             cursor: submitting ? 'default' : 'pointer',
+            ...(compact ? { padding: '9px 18px', fontSize: '0.88rem' } : {}),
           }}
         >
-          <Send size={16} />
+          <Send size={compact ? 14 : 16} />
           {submitting ? 'Posting…' : 'Post Comment'}
         </button>
       </form>

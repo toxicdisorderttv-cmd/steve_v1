@@ -1,9 +1,10 @@
 'use client'
 
 import { useState, useMemo } from 'react'
-import { User, Maximize2, Search, Play } from 'lucide-react'
+import { User, Maximize2, Search, Play, MessageCircle } from 'lucide-react'
 import { Submission } from '@/lib/types'
 import MemoryModal from './MemoryModal'
+import CommentSection from './CommentSection'
 
 type Filter = 'all' | 'family' | 'friend' | 'colleague' | 'other'
 
@@ -34,6 +35,7 @@ function GalleryCard({
   }, [submission.photo_urls, submission.photo_url])
 
   const [photoIdx, setPhotoIdx] = useState(0)
+  const [showComments, setShowComments] = useState(false)
   const isVideo = submission.media_type === 'video' || (photos.length > 0 && isVideoUrl(photos[0]))
   const hasMultiple = photos.length > 1
 
@@ -212,16 +214,39 @@ function GalleryCard({
           {submission.description}
         </p>
 
-        {/* Expand cue */}
-        <span
-          style={{
-            display: 'inline-flex', alignItems: 'center', gap: 7,
-            fontSize: '0.9rem', fontFamily: 'var(--font-mono)',
-            color: 'var(--amber)', marginTop: 2, opacity: 0.75,
-          }}
-        >
-          <Maximize2 size={15} /> Click anywhere to view full screen
-        </span>
+        {/* Expand cue + comment toggle */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, marginTop: 2 }}>
+          <span
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 7,
+              fontSize: '0.9rem', fontFamily: 'var(--font-mono)',
+              color: 'var(--amber)', opacity: 0.75,
+            }}
+          >
+            <Maximize2 size={15} /> Click anywhere to view full screen
+          </span>
+          <button
+            onClick={e => { e.stopPropagation(); setShowComments(v => !v) }}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6,
+              fontSize: '0.9rem', fontFamily: 'var(--font-mono)',
+              color: 'var(--amber)', background: 'none', border: 'none',
+              cursor: 'pointer', padding: 0, opacity: 0.9,
+            }}
+          >
+            <MessageCircle size={15} /> {showComments ? 'Hide comments' : 'Comments'}
+          </button>
+        </div>
+
+        {/* Inline comments — open without leaving the grid */}
+        {showComments && (
+          <div
+            onClick={e => e.stopPropagation()}
+            style={{ marginTop: 12, paddingTop: 14, borderTop: '1px solid var(--border)' }}
+          >
+            <CommentSection submissionId={submission.id} compact />
+          </div>
+        )}
       </div>
     </article>
   )

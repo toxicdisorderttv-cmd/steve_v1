@@ -48,7 +48,33 @@ CREATE POLICY "Anyone can read approved"
   USING (status = 'approved');
 
 -- ══════════════════════════════════════
--- 2. STORAGE BUCKET + POLICIES
+-- 2. COMMENTS TABLE
+-- ══════════════════════════════════════
+CREATE TABLE IF NOT EXISTS comments (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  submission_id UUID NOT NULL REFERENCES submissions(id) ON DELETE CASCADE,
+  commenter_name TEXT NOT NULL,
+  body TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS comments_submission_id_idx ON comments(submission_id);
+
+ALTER TABLE comments ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Anyone can comment" ON comments;
+DROP POLICY IF EXISTS "Anyone can read comments" ON comments;
+
+CREATE POLICY "Anyone can comment"
+  ON comments FOR INSERT
+  WITH CHECK (true);
+
+CREATE POLICY "Anyone can read comments"
+  ON comments FOR SELECT
+  USING (true);
+
+-- ══════════════════════════════════════
+-- 3. STORAGE BUCKET + POLICIES
 -- ══════════════════════════════════════
 INSERT INTO storage.buckets (id, name, public, file_size_limit)
 VALUES ('photos', 'photos', true, 209715200)
@@ -73,7 +99,7 @@ CREATE POLICY "Allow photo deletes"
   USING (bucket_id = 'photos');
 
 -- ══════════════════════════════════════
--- 3. PLACEHOLDER ENTRY
+-- 4. PLACEHOLDER ENTRY
 -- ══════════════════════════════════════
 INSERT INTO submissions (title, photo_url, description, submitter_name, submitter_email, status, media_type, relationship)
 VALUES (

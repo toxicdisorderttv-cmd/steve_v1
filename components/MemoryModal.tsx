@@ -3,6 +3,7 @@
 import { useEffect, useState, useMemo } from 'react'
 import { X, User } from 'lucide-react'
 import { Submission } from '@/lib/types'
+import CommentSection from './CommentSection'
 
 function isVideoUrl(url: string) {
   return /\.(mp4|mov|webm|ogg|avi|m4v|quicktime)(\?|$)/i.test(url)
@@ -213,6 +214,9 @@ export default function MemoryModal({
             {submission.description}
           </p>
         </div>
+
+        {/* Comments */}
+        <CommentSection submissionId={submission.id} />
       </div>
     </div>
   )

@@ -11,3 +11,11 @@ export interface Submission {
   status: 'pending' | 'approved' | 'rejected'
   created_at: string
 }
+
+export interface Comment {
+  id: string
+  submission_id: string
+  commenter_name: string
+  body: string
+  created_at: string
+}

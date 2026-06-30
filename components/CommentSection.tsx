@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { MessageCircle, Send, Info } from 'lucide-react'
+import { MessageCircle, Send } from 'lucide-react'
 import { Comment } from '@/lib/types'
 
 function timeAgo(iso: string) {
@@ -81,20 +81,7 @@ export default function CommentSection({ submissionId, compact = false }: { subm
         </h3>
       </div>
 
-      {/* How-to reminder */}
-      <div
-        style={{
-          display: 'flex', gap: 10, alignItems: 'flex-start',
-          background: 'var(--amber-light)', borderRadius: 4,
-          padding: compact ? '10px 12px' : '12px 16px', margin: compact ? '12px 0 16px' : '16px 0 24px',
-        }}
-      >
-        <Info size={16} color="var(--amber)" style={{ flexShrink: 0, marginTop: 2 }} />
-        <p style={{ fontSize: compact ? '0.82rem' : '0.88rem', color: 'var(--secondary)', lineHeight: 1.6, margin: 0, fontFamily: 'var(--font-mono)' }}>
-          Have something to say about this memory, or remember this moment yourself?
-          Add your name and a message below — comments appear right away for everyone to see.
-        </p>
-      </div>
+      <div style={{ marginTop: compact ? 12 : 16 }} />
 
       {/* Comment list */}
       {loading ? (
